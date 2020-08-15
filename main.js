@@ -440,11 +440,7 @@ async function searchImg(context, customDB = -1) {
             (setting.useAscii2dWhenQuotaExcess && saRet.excess)
           )
             useAscii2d = true;
-<<<<<<< HEAD
-          else { 
-=======
           else {
->>>>>>> dev
             if (saRet.msg.length > 0) needCacheMsgs.push(saRet.msg);
             replySearchMsgs(context, saRet.msg);
           }
