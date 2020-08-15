@@ -72,7 +72,7 @@ function getShareText({ url, title, author, thumbnail, author_url }) {
     let text = `「${title}」/「${author}」
 ${useThumbnail ? CQ.img(thumbnail) : `预览：${thumbnail}`}
 来源：${pixivShorten(url)}`;
-    if (author_url) text += `\n作者: ${pixivShorten(author_url)}`;
+    if (author_url && useThumbnail) text += `\n作者: ${pixivShorten(author_url)}`;
   return text;
 }
 

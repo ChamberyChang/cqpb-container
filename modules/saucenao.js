@@ -198,7 +198,7 @@ async function confuseURL(url) {
 
 async function getShareText({ url, title, thumbnail, author_url, source }) {
   let text = `${title}
-${useThumbnail ? `${thumbnail ? CQ.img(thumbnail) : config.bot.replys.lowAccImgPlaceholder}` : `\n预览：${thumbnail}`}
+${useThumbnail ? `${thumbnail ? CQ.img(thumbnail) : config.bot.replys.lowAccImgPlaceholder}` : `预览：${thumbnail}`}
 来源：${await confuseURL(url)}`;
   if (author_url) text += `\n作者：${await confuseURL(author_url)}`;
   if (source) text += `\n来源：${await confuseURL(source)}`;
