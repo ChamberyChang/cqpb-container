@@ -2,6 +2,7 @@
 /config.json
 /test
 /data/*
+/package-lock.json
 
 # Logs
 logs
@@ -64,6 +65,3 @@ typings/
 
 # next.js build output
 .next
-
-#package
-/package-lock.json
