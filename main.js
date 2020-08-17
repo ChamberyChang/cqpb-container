@@ -530,7 +530,11 @@ function doAkhr(context) {
     };
 
     for (const img of imgs) {
-      ocr[setting.akhr.ocr](img.url, 'chs').then(handleWords).catch(handleError);
+      let akhrlang = null;
+      const akhrlangSearch = /(?<=--lang=)[a-zA-Z]{2,3}/.exec(msg);
+      if (akhrlangSearch) akhrlang = akhrlangSearch[0];
+      else akhrlang = 'chs';
+      ocr[setting.akhr.ocr](img.url, akhrlang).then(handleWords).catch(handleError);
     }
   } else {
     replyMsg(context, '该功能未开启');
