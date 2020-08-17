@@ -202,7 +202,10 @@ function commonHandle(e, context) {
 --pixiv：从P站中搜索
 --danbooru：从 Danbooru 中搜索
 --doujin：搜索本子
---anime：搜索番剧`);
+--anime：搜索番剧
+--ocr：对图片进行文字识别，换行后加
+--lang=(语言代码如chs/jp)指定语种
+--akhr：用ocr计算明日方舟公招结果`);
     return true;
   }
   if (args.version) {
@@ -214,7 +217,8 @@ function commonHandle(e, context) {
 SauceNAO
 Ascii2d
 WhatAnime
-AntiBilibili`);
+AntiBilibili
+明日方舟公招计算器`);
     return true;
   }
 
