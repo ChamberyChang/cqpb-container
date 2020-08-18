@@ -461,7 +461,7 @@ async function searchImg(context, customDB = -1) {
             replySearchMsgs(context, `ascii2d 検索失敗${errMsg}`);
             console.error(`${getTime()} [error] ascii2d`);
             logError(asErr);
-          } else if (color == bovw) {
+          } else if (color.replace(/色合/g, '特徴') == bovw) {
             replySearchMsgs(context, color);
             needCacheMsgs.push(color);
           } else if (config.bot.useThumbnail) {
