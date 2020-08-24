@@ -62,7 +62,7 @@ https://www.bilibili.com/video/${bvid}`;
 
 function getAvBvFromNormalLink(link) {
   if (typeof link !== 'string') return null;
-  const search = /bilibili\.com\/video\/(?:[Aa][Vv]([0-9]+)|([Bb][Vv][0-9a-zA-Z]+))/.exec(link);
+  const search = /bilibili\.com\\?\/video\\?\/(?:[Aa][Vv]([0-9]+)|([Bb][Vv][0-9a-zA-Z]+))/.exec(link);
   if (search) return { aid: search[1], bvid: search[2] };
   return null;
 }
@@ -80,7 +80,7 @@ function getAvBvFromShortLink(shortLink) {
 async function getAvBvFromMsg(msg) {
   let search;
   if ((search = getAvBvFromNormalLink(msg))) return search;
-  if ((search = /(b23|acg)\.tv\/[0-9a-zA-Z]+/.exec(msg))) return getAvBvFromShortLink(`http://${search[0]}`);
+  if ((search = /(b23|acg)\.tv\\?\/[0-9a-zA-Z]+/.exec(msg))) return getAvBvFromShortLink(`http://${search[0]}`);
   return null;
 }
 
@@ -112,7 +112,7 @@ async function antiBiliMiniApp(context, replyFunc) {
         return;
       }
     }
-    const isBangumi = /bilibili\.com\/bangumi|(b23|acg)\.tv\/(ep|ss)/.test(msg);
+    const isBangumi = /bilibili\.com\\?\/bangumi|(b23|acg)\.tv\\?\/(ep|ss)/.test(msg);
     if (title && !isBangumi) {
       const reply = await getSearchVideoInfo(title);
       if (reply) {
