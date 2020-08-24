@@ -80,7 +80,7 @@ function getAvBvFromShortLink(shortLink) {
 async function getAvBvFromMsg(msg) {
   let search;
   if ((search = getAvBvFromNormalLink(msg))) return search;
-  if ((search = /(b23|acg)\.tv\\?\/[0-9a-zA-Z]+/.exec(msg))) return getAvBvFromShortLink(`http://${search[0]}`);
+  if ((search = /(b23|acg)\.tv\\?\/[0-9a-zA-Z]+/.exec(msg))) return getAvBvFromShortLink(`http://${search[0].replace(/\\\//g, "/")}`);
   return null;
 }
 
