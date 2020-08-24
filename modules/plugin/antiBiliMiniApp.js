@@ -41,7 +41,7 @@ https://www.bilibili.com/video/${bvid}`
 }
 
 function getSearchVideoInfo(keyword) {
-  return get(`https://api.bilibili.com/x/web-interface/search/all/v2?${stringify({ keyword })}`).then(
+  return get(`https://api.bilibili.com/x/web-interface/search/all/v2?keyword=${stringify({ keyword })}`).then(
     ({
       data: {
         data: { result },
