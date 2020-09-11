@@ -1,19 +1,12 @@
 import { random } from 'lodash';
-import Axios from '../axiosProxy';
-import config from '../config';
-import Pximg from './pximg';
+import { getProxyURL, getMaster1200 } from './pximg';
 import CQcode from '../CQcode';
-import { resolve as resolveURL } from 'url';
+import { URL } from 'url';
 import NamedRegExp from 'named-regexp-groups';
 import { createCanvas, loadImage } from 'canvas';
+const { get } = require('../axiosProxy');
 
 const zza = Buffer.from('aHR0cHM6Ly9hcGkubG9saWNvbi5hcHAvc2V0dS96aHV6aHUucGhw', 'base64').toString('utf8');
-const setting = config.bot.setu;
-const replys = config.bot.replys;
-const setuReg = new NamedRegExp(config.bot.regs.setu);
-const proxy = setting.pximgProxy.trim();
-
-if (proxy == '') Pximg.startProxy();
 
 function imgAntiShielding(img) {
   const { width: w, height: h } = img;
@@ -37,7 +30,7 @@ function loadImgAndAntiShielding(url) {
   return loadImage(url)
     .then(imgAntiShielding)
     .catch(e => {
-      console.error('[error] loadImage');
+      console.error('[error] anti-shielding load image');
       console.error(e);
       return '';
     });
@@ -49,17 +42,22 @@ function checkBase64RealSize(base64) {
 }
 
 async function getAntiShieldingBase64(url) {
+  const setting = global.config.bot.setu;
   if (setting.antiShielding) {
     const origBase64 = await loadImgAndAntiShielding(url);
     if (checkBase64RealSize(origBase64)) return origBase64;
     if (setting.size1200) return false;
-    const m1200Base64 = await loadImgAndAntiShielding(Pximg.toMaster1200(url));
+    const m1200Base64 = await loadImgAndAntiShielding(getMaster1200(url));
     if (checkBase64RealSize(m1200Base64)) return m1200Base64;
   }
   return false;
 }
 
 function sendSetu(context, replyFunc, logger, bot) {
+  const setting = global.config.bot.setu;
+  const replys = global.config.bot.replys;
+  const proxy = setting.pximgProxy.trim();
+  const setuReg = new NamedRegExp(global.config.bot.regs.setu);
   const setuRegExec = setuReg.exec(context.message);
   if (setuRegExec) {
     // 普通
@@ -89,7 +87,7 @@ function sendSetu(context, replyFunc, logger, bot) {
         replyFunc(context, replys.setuReject);
         return true;
       }
-      limit.cd = 0; //私聊无cd
+      limit.cd = 0; // 私聊无cd
     }
 
     if (!logger.canSearch(context.user_id, limit, 'setu')) {
@@ -97,8 +95,8 @@ function sendSetu(context, replyFunc, logger, bot) {
       return true;
     }
 
-    Axios.get(
-      `${zza}?r18=${r18 ? 1 : 0}${keyword ? keyword : ''}${setting.size1200 ? '&size1200' : ''}${
+    get(
+      `${zza}?r18=${r18 ? 1 : 0}${keyword || ''}${setting.size1200 ? '&size1200' : ''}${
         setting.apikey ? '&apikey=' + setting.apikey.trim() : ''
       }`
     )
@@ -113,11 +111,11 @@ function sendSetu(context, replyFunc, logger, bot) {
         replyFunc(context, `${ret.url} (p${ret.p})`, true);
 
         const url =
-          proxy == ''
-            ? Pximg.getProxyURL(ret.file)
-            : resolveURL(proxy, /(?<=https:\/\/i.pximg.net\/).+/.exec(ret.file)[0]);
+          proxy === ''
+            ? getProxyURL(ret.file)
+            : new URL(/(?<=https:\/\/i.pximg.net\/).+/.exec(ret.file)[0], proxy).toString();
 
-        //  反和谐
+        // 反和谐
         const base64 = await getAntiShieldingBase64(url).catch(e => {
           console.error(`${new Date().toLocaleString()} [error] anti shielding\n${url}\n${e}`);
           replyFunc(context, '反和谐发生错误，详情请查看错误日志', true);
@@ -126,9 +124,10 @@ function sendSetu(context, replyFunc, logger, bot) {
 
         replyFunc(context, base64 ? CQcode.img64(base64) : CQcode.img(url))
           .then(r => {
+            console.log('send', r.data);
             if (delTime > 0 && r && r.data && r.data.message_id)
               setTimeout(() => {
-                bot('delete_msg', { message_id: r.data.message_id });
+                bot('delete_msg', { message_id: r.data.message_id }).then(r => console.log('delete', r));
               }, delTime * 1000);
           })
           .catch(e => {

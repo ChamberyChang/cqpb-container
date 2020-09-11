@@ -1,11 +1,11 @@
+import _ from 'lodash';
 import { get, head } from 'axios';
 import { stringify } from 'qs';
 import NodeCache from 'node-cache';
 import CQ from '../CQcode';
 import logError from '../logError';
-import config from '../config';
+import parseJSON from '../utils/parseJSON';
 
-const setting = config.bot.antiBiliMiniApp;
 const cache = new NodeCache({ stdTTL: 3 * 60 });
 
 function humanNum(num) {
@@ -85,20 +85,21 @@ async function getAvBvFromMsg(msg) {
 }
 
 async function antiBiliMiniApp(context, replyFunc) {
+  const setting = global.config.bot.antiBiliMiniApp;
   const gid = context.group_id;
   const msg = context.message;
-  let title = null;
-  if (msg.includes('1109937557') && msg.includes('&#91;QQ小程序&#93;哔哩哔哩')) {
-    if (setting.despise) {
-      replyFunc(context, `黑人 小程序 黑人
-  黑人  棺  黑人
-    黑人`);
+  const data = (() => {
+    if (msg.includes('com.tencent.miniapp_01') && msg.includes('哔哩哔哩')) {
+      if (setting.despise) {
+        replyFunc(context, CQ.img('小程序\'s Life Matter'));
+      }
+      return parseJSON(context.message);
     }
-    const search = /"desc":"(.+?)"(?:,|})/.exec(CQ.unescape(msg));
-    if (search) title = search[1].replace(/\\"/g, '"');
-  }
+  })();
+  const qqdocurl = _.get(data, 'meta.detail_1.qqdocurl');
+  const title = _.get(data, 'meta.detail_1.desc');
   if (setting.getVideoInfo) {
-    const param = await getAvBvFromMsg(msg);
+    const param = await getAvBvFromMsg(qqdocurl || msg);
     if (param) {
       const { aid, bvid } = param;
       if (gid) {
@@ -112,12 +113,11 @@ async function antiBiliMiniApp(context, replyFunc) {
         return;
       }
     }
-    const isBangumi = /bilibili\.com\\?\/bangumi|(b23|acg)\.tv\\?\/(ep|ss)/.test(msg);
+    const isBangumi = /bilibili\.com\\?\/bangumi|(b23|acg)\.tv\\?\/(ep|ss)/.test(qqdocurl || msg);
     if (title && !isBangumi) {
       const reply = await getSearchVideoInfo(title);
       if (reply) {
         replyFunc(context, reply);
-        return;
       }
     }
   }

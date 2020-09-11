@@ -1,12 +1,9 @@
-import { get } from './axiosProxy';
 import Cheerio from 'cheerio';
 import CQ from './CQcode';
-import config from './config';
 import pixivShorten from './urlShorten/pixiv';
 import logError from './logError';
+const { get } = require('./axiosProxy');
 
-const hosts = config.ascii2dHost;
-const useThumbnail = config.bot.useThumbnail;
 let hostsI = 0;
 
 /**
@@ -15,19 +12,20 @@ let hostsI = 0;
  * @param {string} url 图片地址
  * @returns 色合検索 和 特徴検索 结果
  */
-async function doSearch(url) {
+async function doSearch(url, snLowAcc = false) {
+  const hosts = global.config.ascii2dHost;
   let host = hosts[hostsI++ % hosts.length];
   if (host === 'ascii2d.net') host = `https://${host}`;
   else if (!/^https?:\/\//.test(host)) host = `http://${host}`;
-  let { colorURL, colorDetail } = await get(`${host}/search/url/${encodeURIComponent(url)}`).then(r => ({
+  const { colorURL, colorDetail } = await get(`${host}/search/url/${encodeURIComponent(url)}`).then(r => ({
     colorURL: r.request.res.responseUrl,
     colorDetail: getDetail(r, host),
   }));
-  let bovwURL = colorURL.replace('/color/', '/bovw/');
-  let bovwDetail = await get(bovwURL).then(r => getDetail(r, host));
+  const bovwURL = colorURL.replace('/color/', '/bovw/');
+  const bovwDetail = await get(bovwURL).then(r => getDetail(r, host));
   return {
-    color: 'ascii2d 色合検索\n' + getShareText(colorDetail),
-    bovw: 'ascii2d 特徴検索\n' + getShareText(bovwDetail),
+    color: 'ascii2d 色合検索\n' + getShareText(colorDetail, snLowAcc),
+    bovw: 'ascii2d 特徴検索\n' + getShareText(bovwDetail, snLowAcc),
   };
 }
 
@@ -67,13 +65,17 @@ function getDetail(ret, baseURL) {
   return result;
 }
 
-function getShareText({ url, title, author, thumbnail, author_url }) {
+function getShareText({ url, title, author, thumbnail, author_url }, snLowAcc = false) {
   if (!url) return 'う～さ～～ぎ～～～';
-    let text = `「${title}」/「${author}」
-${useThumbnail ? CQ.img(thumbnail) : `预览：${thumbnail}`}
-来源：${pixivShorten(url)}`;
-    if (author_url && useThumbnail) text += `\n作者: ${pixivShorten(author_url)}`;
-  return text;
+  const texts = [`「${title}」/「${author}」`];
+  if (thumbnail && !(global.config.bot.hideImg || (snLowAcc && global.config.bot.hideImgWhenLowAcc))) {
+    texts.push(CQ.img(thumbnail));
+  } else {
+    texts.push(`预览：${thumbnail}`);
+  }
+  texts.push(`来源：${pixivShorten(url)}`);
+  if (author_url) texts.push(`作者：${pixivShorten(author_url)}`);
+  return texts.join('\n');
 }
 
 export default doSearch;
