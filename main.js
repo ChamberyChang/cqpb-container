@@ -489,7 +489,7 @@ async function searchImg(context, customDB = -1) {
           } else if (color.replace(/色合/g, '特徴') == bovw) {
             replySearchMsgs(context, color);
             needCacheMsgs.push(color);
-          } else if (config.bot.useThumbnail) {
+          } else if (config.bot.hideImg) {
             replySearchMsgs(context, bovw, color);
             needCacheMsgs.push(bovw, color);
           } else {
