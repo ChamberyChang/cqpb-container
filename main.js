@@ -687,11 +687,7 @@ function replySearchMsgs(context, ...msgs) {
       case 'discuss':
         if (!context.pmTipSended) {
           context.pmTipSended = true;
-          if (setting.useGroupReply) {
-            replyMsg(context, '俺の勝ち！何で負けたら私聊に見てくれ！', false, true);
-          } else {
-            replyMsg(context, '俺の勝ち！何で負けたら私聊に見てくれ！', false, false);
-          }
+          replyMsg(context, '俺の勝ち！何で負けたら私聊に見てくれ！', false, false);
         }
         break;
     }
@@ -702,11 +698,7 @@ function replySearchMsgs(context, ...msgs) {
       })
     );
   } else {
-    if (setting.useGroupReply){
-      promises = msgs.map(msg => replyMsg(context, msg, false, true));
-    } else {
-      promises = msgs.map(msg => replyMsg(context, msg, false, false));
-    }
+    promises = msgs.map(msg => replyMsg(context, msg, false, false));
   }
   return Promise.all(promises);
 }
