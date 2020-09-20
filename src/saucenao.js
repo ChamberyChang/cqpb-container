@@ -197,7 +197,7 @@ async function confuseURL(url) {
 async function getShareText({ url, title, thumbnail, author_url, source }) {
   const texts = [title];
   if (thumbnail && !global.config.bot.hideImg) texts.push(CQ.img(thumbnail));
-  else texts.push(`预览：${thumbnail}`);
+  //else texts.push(`预览：${await confuseURL(thumbnail)}`);
   if (url) texts.push(await confuseURL(url));
   if (author_url) texts.push(`作者：${await confuseURL(author_url)}`);
   if (source) texts.push(`来源：${await confuseURL(source)}`);

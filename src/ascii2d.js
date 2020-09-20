@@ -70,9 +70,7 @@ function getShareText({ url, title, author, thumbnail, author_url }, snLowAcc = 
   const texts = [`「${title}」/「${author}」`];
   if (thumbnail && !(global.config.bot.hideImg || (snLowAcc && global.config.bot.hideImgWhenLowAcc))) {
     texts.push(CQ.img(thumbnail));
-  } else {
-    texts.push(`预览：${thumbnail}`);
-  }
+  } //else texts.push(`预览：${await confuseURL(thumbnail)}`);
   texts.push(`来源：${pixivShorten(url)}`);
   if (author_url) texts.push(`作者：${pixivShorten(author_url)}`);
   return texts.join('\n');
