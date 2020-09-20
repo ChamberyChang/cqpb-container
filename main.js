@@ -1,3 +1,4 @@
+import { globalReg } from './src/utils/global';
 import { loadConfig } from './src/config';
 import { version } from './package.json';
 import { CQWebSocket } from 'cq-websocket';
@@ -5,11 +6,10 @@ import saucenao, { snDB } from './src/saucenao';
 import whatanime from './src/whatanime';
 import ascii2d from './src/ascii2d';
 import CQ from './src/CQcode';
-import PFCache from './src/cache';
+import PSCache from './src/cache';
 import Logger from './src/Logger';
 import RandomSeed from 'random-seed';
 import sendSetu from './src/plugin/setu';
-import ocr from './src/plugin/ocr';
 import Akhr from './src/plugin/akhr';
 import _ from 'lodash';
 import minimist from 'minimist';
@@ -18,21 +18,26 @@ import broadcast from './src/broadcast';
 import antiBiliMiniApp from './src/plugin/antiBiliMiniApp';
 import logError from './src/logError';
 import event from './src/event';
-
-// 常量
-global.replyMsg = replyMsg;
-global.sendMsg2Admin = sendMsg2Admin;
-const rand = RandomSeed.create();
-
-// 初始化
-let pfcache = global.config.bot.cache.enable ? new PFCache() : null;
-event.on('reload', () => {
-  if (global.config.bot.cache.enable && !pfcache) pfcache = new PFCache();
-  setBotEventListener();
-});
+import corpus from './src/plugin/corpus';
+const ocr = require('./src/plugin/ocr');
 
 const bot = new CQWebSocket(global.config.cqws);
 const logger = new Logger();
+const rand = RandomSeed.create();
+
+// 全局变量
+globalReg({
+  bot,
+  replyMsg,
+  sendMsg2Admin,
+});
+
+// 初始化
+let psCache = global.config.bot.cache.enable ? new PSCache() : null;
+event.on('reload', () => {
+  if (global.config.bot.cache.enable && !psCache) psCache = new PSCache();
+  setBotEventListener();
+});
 
 // 好友请求
 bot.on('request.friend', context => {
@@ -103,14 +108,14 @@ setBotEventListener();
 
 // 连接相关监听
 bot
-  .on('socket.connecting', (wsType, attempts) => console.log(`${getTime()} 连接中[${wsType}]#${attempts}`))
-  .on('socket.failed', (wsType, attempts) => console.log(`${getTime()} 连接失败[${wsType}]#${attempts}`))
+  .on('socket.connecting', (wsType, attempts) => console.log(`${global.getTime()} 连接中[${wsType}]#${attempts}`))
+  .on('socket.failed', (wsType, attempts) => console.log(`${global.getTime()} 连接失败[${wsType}]#${attempts}`))
   .on('socket.error', (wsType, err) => {
-    console.error(`${getTime()} 连接错误[${wsType}]`);
+    console.error(`${global.getTime()} 连接错误[${wsType}]`);
     console.error(err);
   })
   .on('socket.connect', (wsType, sock, attempts) => {
-    console.log(`${getTime()} 连接成功[${wsType}]#${attempts}`);
+    console.log(`${global.getTime()} 连接成功[${wsType}]#${attempts}`);
     if (wsType === '/api') {
       setTimeout(() => {
         sendMsg2Admin(`已上线#${attempts}`);
@@ -136,6 +141,9 @@ setInterval(() => {
 function commonHandle(e, context) {
   // 黑名单检测
   if (Logger.checkBan(context.user_id, context.group_id)) return true;
+
+  // 语言库
+  if (corpus(context)) return true;
 
   // 兼容其他机器人
   const startChar = context.message.charAt(0);
@@ -228,7 +236,10 @@ function adminPrivateMsg(e, context) {
     }
   }
 
-  if (args.broadcast) broadcast(parseArgs(context.message, false, 'broadcast'));
+  if (args.broadcast) {
+    broadcast(parseArgs(context.message, false, 'broadcast'));
+    return;
+  }
 
   // Ban
   const { 'ban-u': bu, 'ban-g': bg } = args;
@@ -271,7 +282,7 @@ function privateAndAtMsg(e, context) {
     e.stopPropagation();
     searchImg(context);
   } else if (context.message.search('--') !== -1) {
-  } else if (!context.group_id && !context.discuss_id) {
+  } else if (context.message_type === 'private') {
     const dbKey = context.message === 'book' ? 'doujin' : context.message;
     const db = snDB[dbKey];
     if (db) {
@@ -291,7 +302,7 @@ function debugPrivateAndAtMsg(e, context) {
     e.stopPropagation();
     return global.config.bot.replys.debug;
   }
-  console.log(`${getTime()} 收到私聊消息 qq=${context.user_id}`);
+  console.log(`${global.getTime()} 收到私聊消息 qq=${context.user_id}`);
   console.log(_.truncate(context.message, { length: 2048, omission: '（字数过多，后续内容不予显示）' }));
   return privateAndAtMsg(e, context);
 }
@@ -301,7 +312,7 @@ function debugGroupMsg(e, context) {
     e.stopPropagation();
     return;
   }
-  console.log(`${getTime()} 收到群组消息 group=${context.group_id} qq=${context.user_id}`);
+  console.log(`${global.getTime()} 收到群组消息 group=${context.group_id} qq=${context.user_id}`);
   console.log(_.truncate(context.message, { length: 2048, omission: '（字数过多，后续内容不予显示）' }));
   return groupMsg(e, context);
 }
@@ -412,7 +423,7 @@ async function searchImg(context, customDB = -1) {
     else if (args.doujin || args.book) db = snDB.doujin;
     else if (args.anime) db = snDB.anime;
     else if (args.a2d) db = -10001;
-    else if (!context.group_id && !context.discuss_id) {
+    else if (context.message_type === 'private') {
       // 私聊搜图模式
       const sdb = logger.smStatus(0, context.user_id);
       if (sdb) {
@@ -431,7 +442,7 @@ async function searchImg(context, customDB = -1) {
       // 获取缓存
       let hasCache = false;
       if (global.config.bot.cache.enable && !args.purge) {
-        const cache = await pfcache.getCache(img.file, db);
+        const cache = await psCache.getCache(img.file, db);
 
         // 如果有缓存
         if (cache) {
@@ -484,7 +495,7 @@ async function searchImg(context, customDB = -1) {
           if (asErr) {
             const errMsg = (asErr.response && asErr.response.data.length < 50 && `\n${asErr.response.data}`) || '';
             replySearchMsgs(context, `ascii2d 検索失敗${errMsg}`);
-            console.error(`${getTime()} [error] ascii2d`);
+            console.error(`${global.getTime()} [error] ascii2d`);
             logError(asErr);
           } else if (color.replace(/色合/g, '特徴') == bovw) {
             replySearchMsgs(context, color);
@@ -510,7 +521,7 @@ async function searchImg(context, customDB = -1) {
 
         // 将需要缓存的信息写入数据库
         if (global.config.bot.cache.enable && success) {
-          await pfcache.addCache(img.file, db, needCacheMsgs);
+          await psCache.addCache(img.file, db, needCacheMsgs);
         }
       }
     }
@@ -527,7 +538,7 @@ function doOCR(context) {
   const handleOcrResult = ret =>
     replyMsg(context, ret.join('\n')).catch(e => {
       replyMsg(context, 'OCRは死んだ');
-      console.error(`${getTime()} [error] OCR`);
+      console.error(`${global.getTime()} [error] OCR`);
       console.error(e);
     });
 
@@ -554,7 +565,7 @@ function doAkhr(context) {
 
     const handleError = e => {
       replyMsg(context, '词条识别出现错误：\n' + e);
-      console.error(`${getTime()} [error] Akhr`);
+      console.error(`${global.getTime()} [error] Akhr`);
       console.error(e);
     };
 
@@ -631,7 +642,7 @@ function replyMsg(context, message, at = false, reply = false) {
   switch (context.message_type) {
     case 'private':
       if (global.config.bot.debug) {
-        console.log(`${getTime()} 发送私聊消息 qq=${context.user_id}`);
+        console.log(`${global.getTime()} 回复私聊消息 qq=${context.user_id}`);
         console.log(logMsg);
       }
       return bot('send_private_msg', {
@@ -640,7 +651,7 @@ function replyMsg(context, message, at = false, reply = false) {
       });
     case 'group':
       if (global.config.bot.debug) {
-        console.log(`${getTime()} 发送群组消息 group=${context.group_id} qq=${context.user_id}`);
+        console.log(`${global.getTime()} 回复群组消息 group=${context.group_id} qq=${context.user_id}`);
         console.log(logMsg);
       }
       return bot('send_group_msg', {
@@ -649,7 +660,7 @@ function replyMsg(context, message, at = false, reply = false) {
       });
     case 'discuss':
       if (global.config.bot.debug) {
-        console.log(`${getTime()} 发送讨论组消息 discuss=${context.discuss_id} qq=${context.user_id}`);
+        console.log(`${global.getTime()} 回复讨论组消息 discuss=${context.discuss_id} qq=${context.user_id}`);
         console.log(logMsg);
       }
       return bot('send_discuss_msg', {
@@ -707,10 +718,6 @@ function replySearchMsgs(context, ...msgs) {
  */
 function getRand() {
   return rand.floatBetween(0, 100);
-}
-
-function getTime() {
-  return new Date().toLocaleString();
 }
 
 function parseArgs(str, enableArray = false, _key = null) {
