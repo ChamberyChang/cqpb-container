@@ -3,37 +3,35 @@ import { getProxyURL, getMaster1200 } from './pximg';
 import CQcode from '../CQcode';
 import { URL } from 'url';
 import NamedRegExp from 'named-regexp-groups';
-import { createCanvas, loadImage } from 'canvas';
-const { get } = require('../axiosProxy');
+import '../utils/jimp.plugin';
+import Jimp from 'jimp';
+const Axios = require('../axiosProxy');
 
 const zza = Buffer.from('aHR0cHM6Ly9hcGkubG9saWNvbi5hcHAvc2V0dS96aHV6aHUucGhw', 'base64').toString('utf8');
 
-function imgAntiShielding(img) {
-  const { width: w, height: h } = img;
-  const canvas = createCanvas(w, h);
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0);
-  const pixels = [
-    [0, 0, 1, 1],
-    [w - 1, 0, w, 1],
-    [0, h - 1, 1, h],
-    [w - 1, h - 1, w, h],
-  ];
-  for (const pixel of pixels) {
-    ctx.fillStyle = `rgba(${random(255)},${random(255)},${random(255)},0.3)`;
-    ctx.fillRect(...pixel);
-  }
-  return canvas.toDataURL('image/jpeg', 0.97).split(',')[1];
-}
+async function imgAntiShielding(url) {
+  const img = await Jimp.read(url);
 
-function loadImgAndAntiShielding(url) {
-  return loadImage(url)
-    .then(imgAntiShielding)
-    .catch(e => {
-      console.error('[error] anti-shielding load image');
-      console.error(e);
-      return '';
-    });
+  switch (Number(global.config.bot.setu.antiShielding)) {
+    case 1:
+      const [w, h] = [img.getWidth(), img.getHeight()];
+      const pixels = [
+        [0, 0],
+        [w - 1, 0],
+        [0, h - 1],
+        [w - 1, h - 1],
+      ];
+      for (const [x, y] of pixels) {
+        img.setPixelColor(Jimp.rgbaToInt(random(255), random(255), random(255), 1), x, y);
+      }
+      break;
+
+    case 2:
+      img.simpleRotate(90);
+      break;
+  }
+
+  return (await img.getBase64Async(Jimp.AUTO)).split(',')[1];
 }
 
 //  酷Q无法以 base64 发送大于 4M 的图片
@@ -44,10 +42,10 @@ function checkBase64RealSize(base64) {
 async function getAntiShieldingBase64(url) {
   const setting = global.config.bot.setu;
   if (setting.antiShielding) {
-    const origBase64 = await loadImgAndAntiShielding(url);
+    const origBase64 = await imgAntiShielding(url);
     if (checkBase64RealSize(origBase64)) return origBase64;
     if (setting.size1200) return false;
-    const m1200Base64 = await loadImgAndAntiShielding(getMaster1200(url));
+    const m1200Base64 = await imgAntiShielding(getMaster1200(url));
     if (checkBase64RealSize(m1200Base64)) return m1200Base64;
   }
   return false;
@@ -95,7 +93,7 @@ function sendSetu(context, replyFunc, logger, bot) {
       return true;
     }
 
-    get(
+    Axios.get(
       `${zza}?r18=${r18 ? 1 : 0}${keyword || ''}${setting.size1200 ? '&size1200' : ''}${
         setting.apikey ? '&apikey=' + setting.apikey.trim() : ''
       }`
@@ -117,12 +115,15 @@ function sendSetu(context, replyFunc, logger, bot) {
 
         // 反和谐
         const base64 = await getAntiShieldingBase64(url).catch(e => {
-          console.error(`${global.getTime()} [error] anti shielding\n${url}\n${e}`);
+          console.error(`${global.getTime()} [error] anti shielding`);
+          console.error(url);
+          console.error(e);
           replyFunc(context, '反和谐发生错误，详情请查看错误日志', true);
           return false;
         });
 
-        replyFunc(context, base64 ? CQcode.img64(base64) : CQcode.img(url))
+        const imgType = delTime === -1 ? 'flash' : null;
+        replyFunc(context, base64 ? CQcode.img64(base64, imgType) : CQcode.img(url, imgType))
           .then(r => {
             const message_id = r && r.data && r.data.message_id;
             if (delTime > 0 && message_id)
@@ -131,12 +132,14 @@ function sendSetu(context, replyFunc, logger, bot) {
               }, delTime * 1000);
           })
           .catch(e => {
-            console.error(`${global.getTime()} [error] delete msg\n${e}`);
+            console.error(`${global.getTime()} [error] delete msg`);
+            console.error(e);
           });
         logger.doneSearch(context.user_id, 'setu');
       })
       .catch(e => {
-        console.error(`${global.getTime()}\n${e}`);
+        console.error(`${global.getTime()} [error]`);
+        console.error(e);
         replyFunc(context, replys.setuError, true);
       });
     return true;

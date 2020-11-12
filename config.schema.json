@@ -121,6 +121,12 @@
           "description": "大部分请求所使用的代理，支持 http(s):// 和 socks://",
           "default": ""
         },
+        "checkUpdate": {
+          "$id": "#/properties/bot/properties/checkUpdate",
+          "type": "number",
+          "description": "检查更新间隔（天），0 则关闭",
+          "default": 3
+        },
         "cache": {
           "$id": "#/properties/bot/properties/cache",
           "type": "object",
@@ -199,9 +205,10 @@
             },
             "antiShielding": {
               "$id": "#/properties/bot/properties/setu/properties/antiShielding",
-              "type": "boolean",
-              "description": "是否启用反和谐",
-              "default": false
+              "type": "number",
+              "description": "反和谐方式（0：关闭，1：轻微修改，2：旋转）",
+              "default": 0,
+              "enum": [0, 1, 2]
             },
             "allowPM": {
               "$id": "#/properties/bot/properties/setu/properties/allowPM",
@@ -236,7 +243,7 @@
             "deleteTime": {
               "$id": "#/properties/bot/properties/setu/properties/deleteTime",
               "type": "integer",
-              "description": "发送后这么多秒自动撤回（0 则不撤回）",
+              "description": "发送后这么多秒自动撤回（0 则不撤回，-1 为发送闪照）",
               "default": 60
             },
             "cd": {
@@ -276,7 +283,7 @@
             "whiteDeleteTime": {
               "$id": "#/properties/bot/properties/setu/properties/whiteDeleteTime",
               "type": "integer",
-              "description": "白名单群组的撤回时间（0 则不撤回）",
+              "description": "白名单群组内发送后这么多秒自动撤回（0 则不撤回，-1 为发送闪照）",
               "default": 0
             },
             "r18OnlyInWhite": {
@@ -413,7 +420,7 @@
               "type": "string",
               "description": "使用的 OCR 服务",
               "default": "",
-              "enum": ["ocr.space", "baidubce", "tencent"]
+              "enum": ["ocr.space", "baidubce", "tencent", "qq"]
             },
             "ocr.space": {
               "$id": "#/properties/bot/properties/ocr/properties/ocr.space",
@@ -521,7 +528,7 @@
               "type": "string",
               "description": "使用的 OCR 服务",
               "default": "ocr.space",
-              "enum": ["ocr.space", "baidubce", "tencent"]
+              "enum": ["ocr.space", "baidubce", "tencent", "qq"]
             }
           },
           "additionalProperties": true

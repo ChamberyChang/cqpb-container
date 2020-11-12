@@ -1,4 +1,4 @@
-const { get } = require('../../axiosProxy');
+const Axios = require('../../axiosProxy');
 
 const LANGAlias = {
   ch: 'chs',
@@ -17,18 +17,16 @@ const LANGAlias = {
 /**
  * OCR 识别
  *
- * @param {string} url 图片地址
+ * @param {{ url: string }} url 图片地址
  * @param {string} [lang] 语言
- * @returns
+ * @returns {Promise<string[]>} 识别结果
  */
-function ocr(url, lang) {
+export default ({ url }, lang) => {
   const { defaultLANG, apikey } = global.config.bot.ocr['ocr.space'];
   lang = lang || defaultLANG;
-  return get(
+  return Axios.get(
     `https://api.ocr.space/parse/imageurl?apikey=${apikey || 'helloworld'}&url=${encodeURIComponent(url)}&language=${
       LANGAlias[lang] || lang || 'eng'
     }`
   ).then(ret => ret.data.ParsedResults[0].ParsedText.replace(/( *)\r\n$/, '').split('\r\n'));
-}
-
-export default ocr;
+};
