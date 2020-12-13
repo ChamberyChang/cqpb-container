@@ -1,17 +1,20 @@
+import _ from 'lodash';
 import { execSync } from 'child_process';
 import { resolve } from 'path';
 import { compare } from 'compare-versions';
+import { get } from 'axios';
 import removeMd from 'remove-markdown';
-const get = require('axios');
 
 const { version } = require('../../package.json');
 const cwd = resolve(__dirname, '../../');
 
 let lastCheck = '0.0.0';
 
+const getLatestTagRef = () =>
+  _.last(_.compact(execSync('git ls-remote -qt --sort=v:refname', { cwd }).toString().split(/\s+/)));
+
 export const checkUpdate = async () => {
-  execSync('git fetch', { cwd });
-  const latestVersion = execSync('git describe --abbrev=0 --tags', { cwd }).toString().trim().replace(/^v/, '');
+  const latestVersion = getLatestTagRef().replace(/[^\d.]/g, '');
   if (lastCheck === latestVersion || compare(version, latestVersion, '>=')) return;
   const { data: fullChangelog } = await get(
     'https://cdn.jsdelivr.net/gh/Tsuk1ko/cq-picsearcher-bot@master/CHANGELOG.md'
