@@ -159,16 +159,13 @@ function commonHandle(e, context) {
   return true;
   }
   if (context.message === '--advanced-help') {
-    replyMsg(context, `搜索图片时在消息内包含以下参数来使用功能
-参数之间互斥， 优先级从上到下
---get-url：获取图片的在线链接
+    replyMsg(context, `搜索图片可用参数
 --a2d：使用 ascii2d 进行搜索
 --pixiv：从P站中搜索
 --danbooru：从 Danbooru 中搜索
 --doujin：搜索本子
 --anime：搜索番剧
---ocr：对图片进行文字识别，换行后加
---lang=(语言代码如chs/jp)指定语种`);
+--ocr：文字识别--lang=指定语种`);
     return true;
   }
   if (context.message === '--version') {
