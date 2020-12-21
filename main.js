@@ -19,6 +19,7 @@ import antiBiliMiniApp from './src/plugin/antiBiliMiniApp';
 import logError from './src/logError';
 import event from './src/event';
 import corpus from './src/plugin/corpus';
+import getGroupFile from './src/plugin/getGroupFile';
 const ocr = require('./src/plugin/ocr');
 
 const bot = new CQWebSocket(global.config.cqws);
@@ -30,6 +31,7 @@ globalReg({
   bot,
   replyMsg,
   sendMsg2Admin,
+  parseArgs,
 });
 
 // 初始化
@@ -150,14 +152,13 @@ function commonHandle(e, context) {
   if (startChar === '/' || startChar === '<') return true;
 
   // 通用指令
-  const args = parseArgs(context.message);
-  if (args.help) {
-    replyMsg(context, `私聊：直接发送图片即可
-群组：@机器人并发送图片
-在同一条消息中包含多张图片(仅PC)会自动批量搜索`);
-    return true;
+  if (context.message === '--help') {
+    replyMsg(context, `私聊：直接发送图片
+群组：@机器人的同时发送图片
+一条消息中包含多张图片会批量搜索`);
+  return true;
   }
-  if (args['advanced-help']) {
+  if (context.message === '--advanced-help') {
     replyMsg(context, `搜索图片时在消息内包含以下参数来使用功能
 参数之间互斥， 优先级从上到下
 --get-url：获取图片的在线链接
@@ -167,21 +168,19 @@ function commonHandle(e, context) {
 --doujin：搜索本子
 --anime：搜索番剧
 --ocr：对图片进行文字识别，换行后加
---lang=(语言代码如chs/jp)指定语种
---akhr：用ocr计算明日方舟公招结果`);
+--lang=(语言代码如chs/jp)指定语种`);
     return true;
   }
-  if (args.version) {
+  if (context.message === '--version') {
     replyMsg(context, version);
     return true;
   }
-  if (args.about) {
-    replyMsg(context, `目前支持并整合了的图片搜索服务：
+  if (context.message === '--about') {
+    replyMsg(context, `目前支持的服务：
 SauceNAO
 Ascii2d
 WhatAnime
-AntiBilibili
-明日方舟公招计算器`);
+AntiBilibili`);
     return true;
   }
 
@@ -271,10 +270,31 @@ function adminPrivateMsg(e, context) {
 }
 
 // 私聊以及群组@的处理
-function privateAndAtMsg(e, context) {
+async function privateAndAtMsg(e, context) {
   if (commonHandle(e, context)) {
     e.stopPropagation();
     return;
+  }
+
+  if (context.message_type === 'group') {
+    try {
+      const rMsgId = _.get(/^\[CQ:reply,id=([-\d]+?)\]/.exec(context.message), 1);
+      if (rMsgId) {
+        const { data } = await bot('get_msg', { message_id: Number(rMsgId) });
+        if (data) {
+          // 如果回复的是机器人的消息则忽略
+          if (data.sender.user_id === bot._qq) {
+            e.stopPropagation();
+            return;
+          }
+          const imgs = getImgs(data.message);
+          const rMsg = imgs
+            .map(({ file, url }) => `[CQ:image,file=${CQ.escape(file, true)},url=${CQ.escape(url, true)}]`)
+            .join('');
+          context = { ...context, message: context.message.replace(/^\[CQ:reply,id=[-\d]+?\]/, rMsg) };
+        }
+      }
+    } catch (error) {}
   }
 
   if (hasImage(context.message)) {
@@ -303,7 +323,8 @@ function debugPrivateAndAtMsg(e, context) {
     e.stopPropagation();
     return global.config.bot.replys.debug;
   }
-  console.log(`${global.getTime()} 收到私聊消息 qq=${context.user_id}`);
+  if (context.message_type === 'private') console.log(`${global.getTime()} 收到私聊消息 qq=${context.user_id}`);
+  else console.log(`${global.getTime()} 收到群组消息 group=${context.group_id} qq=${context.user_id}`);
   console.log(debugMsgDeleteBase64Content(context.message));
   return privateAndAtMsg(e, context);
 }
@@ -319,8 +340,8 @@ function debugGroupMsg(e, context) {
 }
 
 // 群组消息处理
-function groupMsg(e, context) {
-  if (commonHandle(e, context)) {
+async function groupMsg(e, context) {
+  if (commonHandle(e, context) || (await getGroupFile(context))) {
     e.stopPropagation();
     return;
   }
@@ -419,7 +440,8 @@ async function searchImg(context, customDB = -1) {
   // 决定搜索库
   let db = snDB[global.config.bot.saucenaoDefaultDB] || snDB.all;
   if (customDB < 0) {
-    if (args.pixiv) db = snDB.pixiv;
+    if (args.all) db = snDB.all;
+    else if (args.pixiv) db = snDB.pixiv;
     else if (args.danbooru) db = snDB.danbooru;
     else if (args.doujin || args.book) db = snDB.doujin;
     else if (args.anime) db = snDB.anime;
@@ -594,8 +616,8 @@ function getImgs(msg) {
   let search = reg.exec(msg);
   while (search) {
     result.push({
-      file: search[1],
-      url: search[2],
+      file: CQ.unescape(search[1]),
+      url: CQ.unescape(search[2]),
     });
     search = reg.exec(msg);
   }
