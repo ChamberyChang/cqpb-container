@@ -496,15 +496,17 @@ async function searchImg(context, customDB = -1) {
           if (snRes.lowAcc) snLowAcc = true;
           if (
             (global.config.bot.useAscii2dWhenLowAcc && snRes.lowAcc && (db === snDB.all || db === snDB.pixiv)) ||
-            (global.config.bot.useAscii2dWhenQuotaExcess && snRes.excess)
-          )
+            (global.config.bot.useAscii2dWhenQuotaExcess && snRes.excess) ||
+            (global.config.bot.useAscii2dWhenFailed && !success)
+          ) {
             useAscii2d = true;
+          }
           else if (!snRes.lowAcc && snRes.msg.indexOf('anidb.net') !== -1) useWhatAnime = true;
           else {
             if (snRes.msg.length > 0) needCacheMsgs.push(snRes.msg);
             replySearchMsgs(context, snRes.msg);
+            //replySearchMsgs(context, snRes.msg, snRes.warnMsg);
           }
-          //replySearchMsgs(context, snRes.msg, snRes.warnMsg);
         }
 
         // ascii2d
@@ -518,10 +520,12 @@ async function searchImg(context, customDB = -1) {
             console.error(`${global.getTime()} [error] ascii2d`);
             logError(asErr);
           } else if (color.replace(/色合/g, '特徴') == bovw) {
+            success = true;
             replySearchMsgs(context, color);
             needCacheMsgs.push(color);
           } else if (!config.bot.hideImg) {
-            replySearchMsgs(context, bovw, color);
+            success = true;
+            replySearchMsgs(context, color, bovw);
             needCacheMsgs.push(bovw, color);
           } else {
             replySearchMsgs(context, bovw + '\n' + color);
