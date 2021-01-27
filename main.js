@@ -160,12 +160,7 @@ function commonHandle(e, context) {
   }
   if (context.message === '--advanced-help') {
     replyMsg(context, `搜索图片可用参数
---a2d：使用 ascii2d 进行搜索
---pixiv：从P站中搜索
---danbooru：从 Danbooru 中搜索
---doujin：搜索本子
---anime：搜索番剧
---ocr：文字识别--lang=指定语种`);
+--a2d/--pixiv/--danbooru/--doujin/--anime/--ocr--lang=语种`);
     return true;
   }
   if (context.message === '--version') {
