@@ -158,7 +158,7 @@ function commonHandle(e, context) {
 一条消息中包含多张图片会批量搜索`);
   return true;
   }
-  if (context.message === '--advanced-help') {
+  if (context.message === '--help+') {
     replyMsg(context, `搜索图片可用参数
 --a2d/--pixiv/--danbooru/--doujin/--anime/--ocr--lang=语种`);
     return true;
