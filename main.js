@@ -168,11 +168,9 @@ function commonHandle(e, context) {
     return true;
   }
   if (context.message === '--about') {
-    replyMsg(context, `目前支持的服务：
-SauceNAO
-Ascii2d
-WhatAnime
-AntiBilibili`);
+    replyMsg(context, `本项目为加塞私货劣化版
+欢迎参考源码自行搭建：
+https://github.com/Tsuk1ko/cq-picsearcher-bot`);
     return true;
   }
 
