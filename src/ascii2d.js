@@ -72,7 +72,10 @@ function getShareText({ url, title, author, thumbnail, author_url }, snLowAcc = 
     texts.push(CQ.img(thumbnail));
   } 
   texts.push(`来源：${pixivShorten(url)}`);
-  if (author_url) texts.push(`作者：${pixivShorten(author_url)}`);
+  if (author_url) {
+    const tweetSearch = /twitter.+intent\/user\?user_id=([0-9]+)/.exec(url);
+    if (!tweetSearch) texts.push(`作者：${pixivShorten(author_url)}`);
+  }
   return texts.join('\n');
 }
 
