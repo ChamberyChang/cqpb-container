@@ -10,5 +10,7 @@ export default function pixivShorten(url) {
   if (pidSearch) return 'https://pixiv.net/i/' + pidSearch[1];
   const uidSearch = /pixiv.+member\.php\?id=([0-9]+)/.exec(url) || /pixiv.+users\/([0-9]+)/.exec(url);
   if (uidSearch) return 'https://pixiv.net/u/' + uidSearch[1];
+  const tweetSearch = /twitter.+intent\/user\?user_id=([0-9]+)/.exec(url);
+  if (tweetSearch) return tweetSearch[1];
   return url;
 }
