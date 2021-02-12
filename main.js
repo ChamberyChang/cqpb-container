@@ -176,7 +176,7 @@ https://github.com/Tsuk1ko/cq-picsearcher-bot`);
 
   // setu
   if (global.config.bot.setu.enable) {
-    if (sendSetu(context, replyMsg, logger, bot)) return true;
+    if (sendSetu(context, logger)) return true;
   }
 
   // reminder
@@ -185,7 +185,7 @@ https://github.com/Tsuk1ko/cq-picsearcher-bot`);
   }
 
   //  反哔哩哔哩小程序
-  antiBiliMiniApp(context, replyMsg);
+  antiBiliMiniApp(context);
 
   return false;
 }

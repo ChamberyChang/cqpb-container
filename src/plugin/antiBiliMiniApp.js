@@ -92,14 +92,14 @@ async function getAvBvFromMsg(msg) {
   return null;
 }
 
-async function antiBiliMiniApp(context, replyFunc) {
+async function antiBiliMiniApp(context) {
   const setting = global.config.bot.antiBiliMiniApp;
   const gid = context.group_id;
   const msg = context.message;
   const data = (() => {
     if (msg.includes('com.tencent.miniapp_01') && msg.includes('哔哩哔哩')) {
       if (setting.despise) {
-        replyFunc(context, '小程序 Lives Matter');
+        global.replyMsg(context, '小程序 Lives Matter'));
       }
       return parseJSON(context.message);
     }
@@ -117,7 +117,7 @@ async function antiBiliMiniApp(context, replyFunc) {
       }
       const reply = await getVideoInfo(param);
       if (reply) {
-        replyFunc(context, reply);
+        global.replyMsg(context, reply);
         return;
       }
     }
@@ -125,7 +125,7 @@ async function antiBiliMiniApp(context, replyFunc) {
     if (title && !isBangumi) {
       const reply = await getSearchVideoInfo(title);
       if (reply) {
-        replyFunc(context, reply);
+        global.replyMsg(context, reply);
       }
     }
   }
