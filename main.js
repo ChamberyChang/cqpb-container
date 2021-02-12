@@ -494,7 +494,7 @@ async function searchImg(context, customDB = -1) {
           ) {
             useAscii2d = true;
           }
-          else if (!snRes.lowAcc && snRes.msg.indexOf('anidb.net') !== -1) useWhatAnime = true;
+          else if (snRes.lowAcc && snRes.msg.indexOf('anidb.net') !== -1) useWhatAnime = true;
           else {
             if (snRes.msg.length > 0) needCacheMsgs.push(snRes.msg);
             replySearchMsgs(context, snRes.msg);
