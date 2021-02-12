@@ -99,7 +99,7 @@ async function antiBiliMiniApp(context) {
   const data = (() => {
     if (msg.includes('com.tencent.miniapp_01') && msg.includes('哔哩哔哩')) {
       if (setting.despise) {
-        global.replyMsg(context, '小程序 Lives Matter'));
+        global.replyMsg(context, '小程序 Lives Matter');
       }
       return parseJSON(context.message);
     }
