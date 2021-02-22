@@ -94,7 +94,7 @@ async function doSearch(imgURL, debug = false) {
           }
           appendMsg(`タイプ：${type}`);
           appendMsg(`上映：${start}`);
-          if (end.length > 0) appendMsg(`完結：${end}`);
+          //if (end.length > 0) appendMsg(`完結：${end}`);
           if (isR18) appendMsg('R18注意');
 
           success = true;
