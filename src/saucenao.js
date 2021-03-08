@@ -107,7 +107,7 @@ async function doSearch(imgURL, db, debug = false) {
             source = await getSource(url).catch(() => null);
           }
 
-          if (!title) title = url.indexOf('anidb.net') === -1 ? 'Saucenao結果' : 'AniDB結果';
+          if (!title) title = url.indexOf('anidb.net') === -1 ? ' 結果' : ' AniDB結果';
 
           let doujinName = jp_name || eng_name; // 本子名
 
@@ -129,7 +129,7 @@ async function doSearch(imgURL, db, debug = false) {
           // 回复的消息
           msg = await getShareText({
             url,
-            title: `(${similarity}%)${title}`,
+            title: `SauceNAO (${similarity}%)${title}`,
             thumbnail:
               global.config.bot.hideImgWhenLowAcc && similarity < global.config.bot.saucenaoLowAcc ? null : thumbnail,
             author_url: member_id && url.indexOf('pixiv.net') >= 0 ? `https://pixiv.net/u/${member_id}` : null,
