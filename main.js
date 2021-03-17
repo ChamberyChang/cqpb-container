@@ -503,6 +503,8 @@ async function searchImg(context, customDB = -1) {
       const snRes = await saucenao(img.url, db, args.debug || global.config.bot.debug);
       if (!snRes.success) success = false;
       if (snRes.lowAcc) snLowAcc = true;
+      if (snRes.lowAcc && snRes.msg.indexOf('anidb.net') !== -1) useWhatAnime = true;
+      if (snRes.msg.length > 0) needCacheMsgs.push(snRes.msg);
       if (
         !useWhatAnime &&
         ((global.config.bot.useAscii2dWhenLowAcc && snRes.lowAcc && (db === snDB.all || db === snDB.pixiv)) ||
@@ -510,10 +512,9 @@ async function searchImg(context, customDB = -1) {
           (global.config.bot.useAscii2dWhenFailed && !success))
       ) {
         useAscii2d = true;
+      } else {
+        await Replier.reply(snRes.msg);      
       }
-      if (!snRes.lowAcc && snRes.msg.indexOf('anidb.net') !== -1) useWhatAnime = true;
-      if (snRes.msg.length > 0) needCacheMsgs.push(snRes.msg);
-      await Replier.reply(snRes.msg);
     }
 
     // ascii2d
