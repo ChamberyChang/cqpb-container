@@ -13,10 +13,10 @@ const cache = new NodeCache({ stdTTL: 3 * 60 });
 
 const getIdFromNormalLink = link => {
   if (typeof link !== 'string') return null;
-  const searchVideo = /bilibili\.com\\?\/video\\?\/(?:[Aa][Vv]([0-9]+)|([Bb][Vv][0-9a-zA-Z]+))/.exec(link) || {};
-  const searchDynamic = /t\.bilibili\.com\\?\/([0-9]+)/.exec(link) || {};
-  const searchArticle = /bilibili\.com\\?\/read\\?\/[Cc][Vv]([0-9]+)/.exec(link) || {};
-  const searchLiveRoom = /live\.bilibili\.com\\?\/([0-9]+)/.exec(link) || {};
+  const searchVideo = /bilibili\.com\/video\/(?:[Aa][Vv]([0-9]+)|([Bb][Vv][0-9a-zA-Z]+))/.exec(link) || {};
+  const searchDynamic = /t\.bilibili\.com\/([0-9]+)/.exec(link) || {};
+  const searchArticle = /bilibili\.com\/read\/[Cc][Vv]([0-9]+)/.exec(link) || {};
+  const searchLiveRoom = /live\.bilibili\.com\/([0-9]+)/.exec(link) || {};
   return {
     aid: searchVideo[1],
     bvid: searchVideo[2],
@@ -39,7 +39,7 @@ const getIdFromShortLink = shortLink => {
 const getIdFromMsg = async msg => {
   let search;
   if ((search = getIdFromNormalLink(msg))) return search;
-  if ((search = /(b23|acg)\.tv\\?\/[0-9a-zA-Z]+/.exec(msg))) return getIdFromShortLink(`http://${search[0]}`);
+  if ((search = /(b23|acg)\.tv\/[0-9a-zA-Z]+/.exec(msg))) return getIdFromShortLink(`http://${search[0]}`);
   return {};
 };
 
@@ -74,7 +74,7 @@ async function bilibiliHandler(context) {
       }
       return true;
     }
-    if (title && !/bilibili\.com\\?\/bangumi|(b23|acg)\.tv\\?\/(ep|ss)/.test(qqdocurl || msg)) {
+    if (title && !/bilibili\.com\/bangumi|(b23|acg)\.tv\/(ep|ss)/.test(qqdocurl || msg)) {
       const reply = await getSearchVideoInfo(title);
       if (reply) global.replyMsg(context, reply);
       return true;
