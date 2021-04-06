@@ -19,12 +19,11 @@ export const getVideoInfo = param => {
           },
         },
       }) => `${CQ.img(pic)}
-av${aid}
 ${title}
 UP：${name}
 ${humanNum(view)}播放 ${humanNum(danmaku)}弹幕
 https://www.bilibili.com/video/${bvid}`
-    )
+    )//av${aid}
     .catch(e => {
       logError(`${global.getTime()} [error] bilibili get video info ${param}`);
       logError(e);
@@ -44,13 +43,12 @@ export const getSearchVideoInfo = keyword =>
         if (videos.length === 0) return null;
         const { author, aid, bvid, title, pic, play, video_review } = videos[0];
         return `${CQ.img(`http:${pic}`)}
-（搜索）av${aid}
 ${title.replace(/<([^>]+?)[^>]+>(.*?)<\/\1>/g, '$2')}
 UP：${author}
 ${humanNum(play)}播放 ${humanNum(video_review)}弹幕
 https://www.bilibili.com/video/${bvid}`;
       }
-    )
+    )//（搜索）av${aid}
     .catch(e => {
       logError(`${global.getTime()} [error] bilibili get video info ${keyword}`);
       logError(e);
