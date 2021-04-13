@@ -718,7 +718,7 @@ function replySearchMsgs(context, ...msgs) {
       case 'discuss':
         if (!context.pmTipSended) {
           context.pmTipSended = true;
-          replyMsg(context, '俺の勝ち！何で負けたら私聊に見てくれ！', false, false);
+          replyMsg(context, '俺の勝ち！何で負けたら私聊に見てくれ！', false, true);
         }
         break;
     }
@@ -729,7 +729,7 @@ function replySearchMsgs(context, ...msgs) {
       })
     );
   }
-  return asyncMap(msgs, msg => replyMsg(context, msg, false, false));
+  return asyncMap(msgs, msg => replyMsg(context, msg, false, true));
 }
 
 /**
