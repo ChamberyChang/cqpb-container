@@ -729,7 +729,7 @@ function replySearchMsgs(context, ...msgs) {
       })
     );
   }
-  return asyncMap(msgs, msg => replyMsg(context, msg, false, true));
+  return asyncMap(msgs, msg => replyMsg(context, msg, false, false));
 }
 
 /**
