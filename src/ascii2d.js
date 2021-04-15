@@ -73,7 +73,7 @@ function getShareText({ url, title, author, thumbnail, author_url }, snLowAcc = 
   } 
   texts.push(`来源：${pixivShorten(url)}`);
   if (author_url) {
-    const tweetSearch = /twitter.+intent\/user\?user_id=([0-9]+)/.exec(author_url);
+    const tweetSearch = /(twitter.+intent\/user\?user_id=([0-9]+))|(al.dmm.co.jp.+)/.exec(author_url);
     if (!tweetSearch) texts.push(`作者：${pixivShorten(author_url)}`);
   }
   return texts.join('\n');
