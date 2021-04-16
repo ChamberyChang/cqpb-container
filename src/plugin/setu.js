@@ -73,7 +73,7 @@ function sendSetu(context, logger) {
 
     const regGroup = setuRegExec.groups || {};
     const r18 =
-      regGroup.r18 && !(context.group_id && setting.r18OnlyInWhite && !setting.whiteGroup.includes(context.group_id));
+      (regGroup.r18 || regGroup.r18g) && !(context.group_id && setting.r18OnlyInWhite && !setting.whiteGroup.includes(context.group_id));
     const keyword = (regGroup.keyword && `&keyword=${encodeURIComponent(regGroup.keyword)}`) || false;
 
     // 群聊还是私聊
