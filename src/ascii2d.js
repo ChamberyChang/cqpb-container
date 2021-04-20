@@ -24,8 +24,8 @@ async function doSearch(url, snLowAcc = false) {
   const bovwURL = colorURL.replace('/color/', '/bovw/');
   const bovwDetail = await Axios.get(bovwURL).then(r => getDetail(r, host));
   return {
-    color: 'ascii2d 色合検索\n' + getShareText(colorDetail, snLowAcc),
-    bovw: 'ascii2d 特徴検索\n' + getShareText(bovwDetail, snLowAcc),
+    color: '色合\n' + getShareText(colorDetail, snLowAcc),
+    bovw: '特徴\n' + getShareText(bovwDetail, snLowAcc),
   };
 }
 
