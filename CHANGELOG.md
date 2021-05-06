@@ -2,6 +2,18 @@
 
 ## 2021
 
+### 05-05 v2.26.1
+
+- 使用 go-cqhttp 的场合下，whatanime 支持发送预览视频的功能需要自行安装 [ffmpeg](https://ffmpeg.org/download.html) 才可以使用
+- 配置项变更
+  - M `bot.whatanimeSendVideo` 默认变更为 `false`
+
+### 05-05 v2.26.0
+
+- whatanime 支持发送预览视频
+- 配置项变更
+  - A `bot.whatanimeSendVideo`
+
 ### 04-25 v2.25.0
 
 - 定时提醒支持重载了（方便手动修改 `data/rmd.json`）
