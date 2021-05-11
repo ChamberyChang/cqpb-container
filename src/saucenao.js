@@ -14,6 +14,7 @@ const snDB = {
   danbooru: 9,
   doujin: 18,
   anime: 21,
+  manga: 37,
 };
 
 const exts = {
@@ -103,6 +104,9 @@ async function doSearch(imgURL, db, debug = false) {
               for (let i = 1; i < ext_urls.length; i++) {
                 if (ext_urls[i].indexOf('danbooru') !== -1) url = ext_urls[i];
               }
+            } else if (index_id === snDB.manga) {
+              // 如果结果为 mangadex，跳过
+              url = ext_urls[1];
             }
             url = url.replace('http://', 'https://');
             // 获取来源
