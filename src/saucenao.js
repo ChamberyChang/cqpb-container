@@ -109,7 +109,7 @@ async function doSearch(imgURL, db, debug = false) {
               url = ext_urls[0];
               title = `${data.results[0].data.source}${data.results[0].data.part}`;
               member_name = data.results[0].data.artist;
-            } else if (index_id === snDB.manga) {
+            } else if (index_id === snDB.anime) {
               // 如果结果为 aniDB，补全
               url = ext_urls[0];
               title = `${data.results[0].data.source} ${data.results[0].data.part}`;
