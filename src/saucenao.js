@@ -105,15 +105,23 @@ async function doSearch(imgURL, db, debug = false) {
                 if (ext_urls[i].indexOf('danbooru') !== -1) url = ext_urls[i];
               }
             } else if (index_id === snDB.manga) {
-              // 如果结果为 mangadex，跳过
-              url = ext_urls[1];
+              // 如果结果为 mangadex，补全
+              url = ext_urls[0];
+              title = `${data.results[0].data.source}${data.results[0].data.part}`;
+              member_name = data.results[0].data.artist;
+            } else if (index_id === snDB.manga) {
+              // 如果结果为 aniDB，补全
+              url = ext_urls[0];
+              title = `${data.results[0].data.source} ${data.results[0].data.part}`;
+              member_name = data.results[0].data.est_time;
             }
             url = url.replace('http://', 'https://');
             // 获取来源
             source = await getSource(url).catch(() => null);
           }
 
-          if (!title) title = url.indexOf('anidb.net') === -1 ? ' 結果' : ' AniDB結果';
+          if (!title) title = ' 結果';
+          //if (!title) title = url.indexOf('anidb.net') === -1 ? ' 結果' : ' AniDB結果';
 
           let doujinName = jp_name || eng_name; // 本子名
 
