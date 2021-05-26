@@ -31,6 +31,11 @@ function getChar(i) {
   return AKDATA.characters[i];
 }
 
+function getTagCharsetExcludeRegExp() {
+  const charset = _.uniq(Object.keys(AKDATA.data).flatMap(tag => tag.split(''))).join('');
+  return new RegExp(`[^${charset}]`, 'g');
+}
+
 async function pullData() {
   const [charData, charNameData, tagData] = _.map(
     await Promise.all([
@@ -100,7 +105,7 @@ async function init() {
 }
 
 function getCombinations(tags) {
-  const combs = _.flatMap([1, 2, 3], v => _.combinations(tags, v));
+  const combs = [1, 2, 3].flatMap(v => _.combinations(tags, v));
   const result = [];
   for (const comb of combs) {
     const need = [];
@@ -145,10 +150,20 @@ function getResultText(words) {
   return text;
 }
 
+const ERROR_MAP = {
+  千员: '干员',
+  滅速: '減速',
+  枳械: '机械',
+  冫口了: '治疗',
+};
+
 function getResultImg(words) {
+  const excludeRegExp = getTagCharsetExcludeRegExp();
   let tags = _.transform(
     words,
     (a, w) => {
+      w = _.reduce(ERROR_MAP, (cur, correct, error) => cur.replace(error, correct), w);
+      w = w.replace(excludeRegExp, '');
       //  支持日服词条  
       w = w.replace(/先鋒([夕タ][亻イ][ブプ]?)?/g, '先锋干员');
       w = w.replace(/前衛([夕タ][亻イ][ブプ]?)?/g, '近卫干员');
@@ -176,8 +191,6 @@ function getResultImg(words) {
       w = w.replace('ロボット', '支援机械');
       w = w.replace('エリート', '资深干员');
       w = w.replace('上級エリート', '高级资深干员');
-      //  for tencent OCR
-      w = w.replace('千员', '干员');
       //  for baidu OCR
       if (w.includes(GJZS) && w.length > 6) {
         a.push(GJZS);
@@ -191,7 +204,7 @@ function getResultImg(words) {
     },
     []
   );
-  tags = _.uniq(tags).slice(0, 6);
+  tags = _.uniq(tags).slice(0, 5);
   const combs = getCombinations(tags);
   return draw(AKDATA, combs, tags);
 }

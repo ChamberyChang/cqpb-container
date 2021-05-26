@@ -5,6 +5,8 @@ import { URL } from 'url';
 import NamedRegExp from 'named-regexp-groups';
 import '../utils/jimp.plugin';
 import Jimp from 'jimp';
+import urlShorten from '../urlShorten';
+import logger from '../logger';
 const Axios = require('../axiosProxy');
 
 const zza = Buffer.from('aHR0cHM6Ly9hcGkubG9saWNvbi5hcHAvc2V0dS96aHV6aHUucGhw', 'base64').toString('utf8');
@@ -57,12 +59,13 @@ async function getAntiShieldingBase64(url) {
   return false;
 }
 
-function sendSetu(context, logger) {
+function sendSetu(context, at = true) {
   const setting = global.config.bot.setu;
   const replys = global.config.bot.replys;
   const proxy = setting.pximgProxy.trim();
   const setuReg = new NamedRegExp(global.config.bot.regs.setu);
   const setuRegExec = setuReg.exec(context.message);
+  const isGroupMsg = context.message_type === 'group';
   if (setuRegExec) {
     // 普通
     const limit = {
@@ -73,11 +76,12 @@ function sendSetu(context, logger) {
 
     const regGroup = setuRegExec.groups || {};
     const r18 =
-      regGroup.r18 && !(context.group_id && setting.r18OnlyInWhite && !setting.whiteGroup.includes(context.group_id));
+      regGroup.r18 && !(isGroupMsg && setting.r18OnlyInWhite && !setting.whiteGroup.includes(context.group_id));
     const keyword = (regGroup.keyword && `&keyword=${encodeURIComponent(regGroup.keyword)}`) || false;
+    const privateR18 = setting.r18OnlyPrivate && r18 && isGroupMsg;
 
     // 群聊还是私聊
-    if (context.group_id) {
+    if (isGroupMsg) {
       // 群白名单
       if (setting.whiteGroup.includes(context.group_id)) {
         limit.cd = setting.whiteCd;
@@ -95,7 +99,7 @@ function sendSetu(context, logger) {
     }
 
     if (!logger.canSearch(context.user_id, limit, 'setu')) {
-      global.replyMsg(context, replys.setuLimit, true);
+      global.replyMsg(context, replys.setuLimit, at);
       return true;
     }
 
@@ -108,26 +112,45 @@ function sendSetu(context, logger) {
       .then(async ret => {
         if (ret.code !== 0) {
           if (ret.code === 429) global.replyMsg(context, replys.setuQuotaExceeded || ret.error, true);
-          else global.replyMsg(context, ret.error, true);
+          else global.replyMsg(context, ret.error, at);
           return;
         }
 
-        global.replyMsg(context, `${ret.url} (p${ret.p})`, true);
+        const urlMsgs = [`${ret.url} (p${ret.p})`];
+        if (setting.sendPximgProxys.length) {
+          urlMsgs.push('原图镜像地址：');
+          for (const imgProxy of setting.sendPximgProxys) {
+            const imgUrl = getSetuUrlByTemplate(imgProxy, ret);
+            urlMsgs.push((await urlShorten(setting.shortenPximgProxy, imgUrl)).result);
+          }
+        }
 
-        const url =
-          proxy === ''
-            ? getProxyURL(ret.file)
-            : new URL(/(?<=https:\/\/i.pximg.net\/).+/.exec(ret.file)[0], proxy).toString();
+        if (
+          r18 &&
+          setting.r18OnlyUrl[
+            context.message_type === 'private' && context.sub_type !== 'friend' ? 'temp' : context.message_type
+          ]
+        ) {
+          global.replyMsg(context, urlMsgs.join('\n'), false, at);
+          return;
+        }
+        if (privateR18) urlMsgs.push('※ 图片将私聊发送');
+        global.replyMsg(context, urlMsgs.join('\n'), at);
+
+        const url = proxy === '' ? getProxyURL(ret.file) : getSetuUrlByTemplate(proxy, ret);
 
         // 反和谐
-        const base64 = await getAntiShieldingBase64(url).catch(e => {
-          console.error(`${global.getTime()} [error] anti shielding`);
-          console.error(ret.file);
-          console.error(e);
-          if (String(e).includes('Could not find MIME for Buffer')) return PIXIV_404;
-          global.replyMsg(context, '反和谐发生错误，图片将原样发送，详情请查看错误日志');
-          return false;
-        });
+        const base64 =
+          !privateR18 &&
+          isGroupMsg &&
+          (await getAntiShieldingBase64(url).catch(e => {
+            console.error(`${global.getTime()} [error] anti shielding`);
+            console.error(ret.file);
+            console.error(e);
+            if (String(e).includes('Could not find MIME for Buffer')) return PIXIV_404;
+            global.replyMsg(context, '反和谐发生错误，图片将原样发送，详情请查看错误日志');
+            return false;
+          }));
 
         if (base64 === PIXIV_404) {
           global.replyMsg(context, '图片发送失败，可能是网络问题/插画已被删除/原图地址失效');
@@ -135,25 +158,33 @@ function sendSetu(context, logger) {
         }
 
         const imgType = delTime === -1 ? 'flash' : null;
-        global
-          .replyMsg(context, base64 ? CQcode.img64(base64, imgType) : CQcode.img(url, imgType))
-          .then(r => {
-            const message_id = _.get(r, 'data.message_id');
-            if (delTime > 0 && message_id)
-              setTimeout(() => {
-                global.bot('delete_msg', { message_id });
-              }, delTime * 1000);
-          })
-          .catch(e => {
-            console.error(`${global.getTime()} [error] delete msg`);
-            console.error(e);
+        if (privateR18) {
+          global.bot('send_private_msg', {
+            user_id: context.user_id,
+            group_id: setting.r18OnlyPrivateAllowTemp ? context.group_id : undefined,
+            message: base64 ? CQcode.img64(base64, imgType) : CQcode.img(url, imgType),
           });
+        } else {
+          global
+            .replyMsg(context, base64 ? CQcode.img64(base64, imgType) : CQcode.img(url, imgType))
+            .then(r => {
+              const message_id = _.get(r, 'data.message_id');
+              if (delTime > 0 && message_id)
+                setTimeout(() => {
+                  global.bot('delete_msg', { message_id });
+                }, delTime * 1000);
+            })
+            .catch(e => {
+              console.error(`${global.getTime()} [error] delete msg`);
+              console.error(e);
+            });
+        }
         logger.doneSearch(context.user_id, 'setu');
       })
       .catch(e => {
         console.error(`${global.getTime()} [error]`);
         console.error(e);
-        global.replyMsg(context, replys.setuError, true);
+        global.replyMsg(context, replys.setuError, at);
       });
     return true;
   }
@@ -161,3 +192,9 @@ function sendSetu(context, logger) {
 }
 
 export default sendSetu;
+
+function getSetuUrlByTemplate(tpl, setu) {
+  const path = new URL(setu.file).pathname;
+  if (!/{{.+}}/.test(tpl)) return new URL(`.${path}`, tpl).href;
+  return _.template(tpl, { interpolate: /{{([\s\S]+?)}}/g })({ path, ..._.pick(setu, ['pid', 'p']) });
+}

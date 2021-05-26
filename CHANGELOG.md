@@ -2,6 +2,89 @@
 
 ## 2021
 
+### 05-25 v2.29.3
+
+- 修复部分情况下可能出现文件不存在错误的问题（不影响程序正常运行）
+- whatanime 发送预览视频不再需要依赖 ffmpeg
+- 改进方舟公招计算器的识别逻辑
+- 默认 OCR 服务变更为为 qq
+- `bot.setu.pximgProxy` 和 `bot.setu.sendPximgProxys` 新增支持一些占位符
+- 配置项变更
+  - M `bot.ocr.use` 默认值 `"ocr.space"` -> `"qq"`
+  - M `bot.akhr.ocr` 默认值 `"ocr.space"` -> `"qq"`
+
+### 05-23 v2.29.2
+
+- 改进方舟公招计算器生成图片的效果 ([#193](../../issues/193))
+- 新增 `autoUpdateConfig` 配置，可自动按照 `config.default.json` 来更新 `config.json`
+- 配置项变更
+  - A `autoUpdateConfig`
+
+### 05-23 v2.29.1
+
+修复找不到模块问题，若先前更新过 v2.29.0，更新到最新版时请按以下步骤操作
+
+```bash
+git reset v2.29.0 --hard
+git pull # 可能会报错，不用管
+git reset v2.29.1 --hard
+git pull
+```
+
+### 05-23 v2.29.0
+
+- 修复了 `bot.setu.r18OnlyUrl` 导致非 r18 图也只发 url 的问题 ([#182](../../issues/182))
+- 更新了 trace.moe API，解决了无法发送预览视频的问题
+- `bot.setu.r18OnlyUrl` 分开群聊、私聊、临时会话（⚠️需要更新配置） ([#183](../../issues/183))
+- 定时提醒可通过添加 `--origin` 参数使内容不被 CQ 转义，见 [wiki](../../wiki/%E9%99%84%E5%8A%A0%E5%8A%9F%E8%83%BD#%E9%98%B2%E6%AD%A2-cq-%E8%BD%AC%E4%B9%89) ([#178](../../issues/178))
+- 可以使用 reminder 定时发送 setu，见 [wiki](../../wiki/%E9%99%84%E5%8A%A0%E5%8A%9F%E8%83%BD#setu-1) ([#174](../../issues/174))
+- 配置项变更
+  - M `bot.whatanimeHost` 默认值 `"trace.moe"` -> `"api.trace.moe"`（旧值在读取时会被自动替换为新值）
+  - M `bot.setu.r18OnlyUrl` 默认值 `false` -> `{ "private": false, "group": false, "temp": false }`，如先前修改为 `true` 请更新配置，否则会变为新默认值
+
+### 05-19 v2.28.5
+
+- 修复了 `bot.setu.pximgServerHost` 设置无效的问题
+- 弃用了一些已经不可用的短链接服务
+
+### 05-17 v2.28.4
+
+- 修复了可能出现 pm2 占用内存过多的问题
+- ⚠️本次更新前请在程序目录下执行 `npx pm2 delete CQPF`，不需要执行 `npm stop`，其他步骤相同
+
+### 05-16 v2.28.3
+
+- 修复“允许通过临时会话私聊发送”相关功能可能无效的问题
+
+### 05-16 v2.28.2
+
+- 修复 pximg 反代服务启动问题
+- pximg 反代服务默认只在本地(`127.0.0.1`)监听，如有需要请更改 `bot.setu.pximgServerHost`
+- 配置项变更
+  - A `bot.setu.pximgServerHost`
+
+### 05-16 v2.28.1
+
+- 修复 `bot.setu.shortenPximgProxy` 默认值
+
+### 05-16 v2.28.0
+
+- [#175](../../pull/175) by @niceRAM
+  - 允许通过临时会话私聊发送搜图结果
+  - 可配置 r18 setu 仅通过私聊发送（默认开启，如不需要请修改配置）
+  - 允许 r18 setu 通过临时会话私聊发送
+  - 发送 setu 链接时可以追加若干个原图镜像链接
+  - 可配置对原图镜像链接做短链接处理（增加 oy.mk 短链接服务 by @Quan666）
+- pximg 反代服务默认使用随机可用端口号（老用户可手动将 `bot.setu.pximgServerPort` 设置为 `0`）
+- 配置项变更
+  - M `bot.setu.pximgServerPort` 默认值 `60233` -> `0`
+  - A `bot.pmSearchResultTemp`
+  - A `bot.setu.sendPximgProxys`
+  - A `bot.setu.shortenPximgProxy`
+  - A `bot.setu.r18OnlyUrl`
+  - A `bot.setu.r18OnlyPrivate`
+  - A `bot.setu.r18OnlyPrivateAllowTemp`
+
 ### 05-12 v2.27.1
 
 - 使用方舟公招计算器将不再需要自行安装字体

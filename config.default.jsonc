@@ -1,4 +1,7 @@
 {
+  // 是否自动按照 config.default.json 来更新 config.json，可以自动向 config.json 添加新增的配置项，
+  // 但 config.json 中你自己写的注释会被丢弃，第一次启用前建议先备份一下你的 config.json
+  "autoUpdateConfig": false,
   // momocow/node-cq-websocket 配置，请参考 https://git.io/JkK9A
   "cqws": {
     "host": "127.0.0.1",
@@ -32,8 +35,7 @@
     "hideImgWhenLowAcc": false,
     // whatanime 得到 R18 结果时隐藏结果缩略图
     "hideImgWhenWhatanimeR18": false,
-    // whatanime 发送预览视频，R18 结果不会发送（需要自行安装 ffmpeg 供 go-cqhttp 使用）
-    // https://ffmpeg.org/download.html
+    // whatanime 发送预览视频，R18 结果不会发送
     "whatanimeSendVideo": false,
     // saucenao 默认搜索库，可选值：["all", "pixiv", "danbooru", "doujin", "anime"]
     "saucenaoDefaultDB": "all",
@@ -53,6 +55,9 @@
     "searchModeTimeout": 60,
     // 在群内使用搜图功能时，只通过私聊发送搜图结果
     "pmSearchResult": false,
+    // 允许通过临时会话向未添加机器人为好友的用户私聊发送搜图结果
+    // 需允许群内用户发起临时会话，或将机器人设置管理员
+    "pmSearchResultTemp": false,
     // 若结果消息有多条，采用合并转发方式发送搜图结果（仅在群内有效）
     "groupForwardSearchResult": false,
     // 大部分请求所使用的代理，支持 http(s):// 和 socks://
@@ -89,12 +94,18 @@
       "antiShielding": 0,
       // 是否允许私聊使用
       "allowPM": true,
-      // P站图本地反代端口，若端口冲突请修改此项
-      "pximgServerPort": 60233,
-      // 设置使用的P站本地反代服务地址
+      // P站图本地反代服务主机，可以手动指定，一般不需要动，详见 wiki
+      "pximgServerHost": "127.0.0.1",
+      // P站图本地反代服务端口，可以手动指定，0 为自动分配，详见 wiki
+      "pximgServerPort": 0,
+      // 发送时使用的P站本地反代服务地址，一般不需要，详见 wiki
       "usePximgAddr": "",
-      // 设置使用的P站在线反代服务地址
+      // 发送时使用的P站在线反代服务地址，支持占位符 {{pid}} {{p}} {{path}}，详见 wiki（使用时上面三个配置将不再起效）
       "pximgProxy": "",
+      // 镜像地址，发送地址时追加的在线反向代理的地址，设置为空数组则不追加，支持占位符同上
+      "sendPximgProxys": ["https://i.pixiv.cat/"],
+      // 对镜像地址进行短链接处理，可选值: ["oy.mk", "yww.uy"]，留空 "" 则不处理。
+      "shortenPximgProxy": "",
       // 是否发送 master1200 大小的图片，以节省流量或加快发送速度，关闭时将发送原图
       "size1200": false,
       // 发送后这么多秒自动撤回（0 则不撤回，-1 为发送闪照）
@@ -111,6 +122,16 @@
       "whiteCd": 0,
       // 白名单群组内发送后这么多秒自动撤回（0 则不撤回，-1 为发送闪照）
       "whiteDeleteTime": 0,
+      // r18 是否只发送地址不发送图片（如果开启，建议设置 `sendPximgProxys`）
+      "r18OnlyUrl": {
+        "private": false, // 私聊
+        "group": false, // 群聊
+        "temp": false // 群临时会话
+      },
+      // r18 图片只通过私聊发送（私聊不会被和谐，因此不会进行反和谐）
+      "r18OnlyPrivate": true,
+      // 允许临时会话发送 r18 结果，用法同 `bot.pmSearchResultTemp`
+      "r18OnlyPrivateAllowTemp": false,
       // 只允许在白名单群组中发送 r18 setu
       "r18OnlyInWhite": true
     },
@@ -156,8 +177,8 @@
     },
     // OCR 相关设置，请查看“wiki-附加功能-OCR文字识别”以了解更多
     "ocr": {
-      // 使用的 OCR 服务，可选值：["ocr.space", "baidubce", "tencent", "qq"]，qq 需要 go-cqhttp
-      "use": "ocr.space",
+      // 使用的 OCR 服务，可选值：["qq", "ocr.space", "baidubce", "tencent"]，qq 需要 go-cqhttp
+      "use": "qq",
       "ocr.space": {
         "defaultLANG": "eng",
         "apikey": ""
@@ -181,7 +202,7 @@
       // 检查更新间隔（小时），0 则关闭
       "updateInterval": 24,
       // 使用的 OCR 服务，可选值同上面的 bot.ocr.use
-      "ocr": "ocr.space"
+      "ocr": "qq"
     },
     // 定时提醒功能设置，请查看“wiki-附加功能-定时提醒”以了解更多
     "reminder": {
@@ -213,7 +234,7 @@
   // saucenao APIKEY，必填，否则无法使用 saucenao 搜图
   "saucenaoApiKey": "",
   // whatanime 自定义 host，格式：[protocol://]host[:port]
-  "whatanimeHost": "trace.moe",
+  "whatanimeHost": "api.trace.moe",
   // whatanime Token，选填
   "whatanimeToken": "",
   // ascii2d 自定义 host，格式：[protocol://]host[:port]
