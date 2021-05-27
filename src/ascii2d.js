@@ -23,9 +23,12 @@ async function doSearch(url, snLowAcc = false) {
   }));
   const bovwURL = colorURL.replace('/color/', '/bovw/');
   const bovwDetail = await Axios.get(bovwURL).then(r => getDetail(r, host));
+  const colorRet = getResult(colorDetail, snLowAcc);
+  const bovwRet = getResult(bovwDetail, snLowAcc);
   return {
-    color: '色合\n' + getShareText(colorDetail, snLowAcc),
-    bovw: '特徴\n' + getShareText(bovwDetail, snLowAcc),
+    color: `色合\n${colorRet.result}`,
+    bovw: `特徴\n${bovwRet.result}`,
+    success: colorRet.success && bovwRet.success,
   };
 }
 
@@ -65,8 +68,8 @@ function getDetail(ret, baseURL) {
   return result;
 }
 
-function getShareText({ url, title, author, thumbnail, author_url }, snLowAcc = false) {
-  if (!url) return 'う～さ～～ぎ～～～';
+function getResult({ url, title, author, thumbnail, author_url }, snLowAcc = false) {
+  if (!url) return { success: false, result: 'う～さ～～ぎ～～～' };
   const texts = [`「${title}」/「${author}」`];
   if (thumbnail && !(global.config.bot.hideImg || (snLowAcc && global.config.bot.hideImgWhenLowAcc))) {
     texts.push(CQ.img(thumbnail));
@@ -76,7 +79,7 @@ function getShareText({ url, title, author, thumbnail, author_url }, snLowAcc = 
     const tweetSearch = /(twitter.+intent\/user\?user_id=([0-9]+))|(al.dmm.co.jp.+)|(seiga.nicovideo.+)/.test(author_url);
     if (!tweetSearch) texts.push(`作者：${pixivShorten(author_url)}`);
   }
-  return texts.join('\n');
+  return { success: true, result: texts.join('\n') };
 }
 
 export default doSearch;
