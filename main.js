@@ -471,7 +471,7 @@ async function searchImg(context, customDB = -1) {
     // 检查搜图次数
     if (
       context.user_id !== global.config.bot.admin &&
-      !logger.canSearch(context.user_id, global.config.bot.searchLimit)
+      !logger.applyQuota(context.user_id, { value: global.config.bot.searchLimit })
     ) {
       replyMsg(context, global.config.bot.replys.personLimit, false, true);
       return;
@@ -516,10 +516,9 @@ async function searchImg(context, customDB = -1) {
 
     // ascii2d
     if (useAscii2d) {
-      const { color, bovw, success: asSuc, asErr } = await ascii2d(img.url, snLowAcc).catch(asErr => ({
-        asErr,
-      }));
+      const { color, bovw, success: asSuc, asErr } = await ascii2d(img.url, snLowAcc).catch(asErr => ({ asErr }));
       if (asErr) {
+        success = false;
         const errMsg = (asErr.response && asErr.response.data.length < 50 && `\n${asErr.response.data}`) || '';
         await Replier.reply(`ascii2d 搜索失败${errMsg}`);
         console.error(`${global.getTime()} [error] ascii2d`);
@@ -546,7 +545,7 @@ async function searchImg(context, customDB = -1) {
       if (waRet.msgs.length > 0) needCacheMsgs.push(...waRet.msgs);
     }
 
-    if (hasSucc) logger.doneSearch(context.user_id);
+    if (!hasSucc) logger.releaseQuota(context.user_id);
     Replier.end();
 
     // 将需要缓存的信息写入数据库
@@ -563,15 +562,15 @@ function doOCR(context) {
   const langSearch = /(?<=--lang=)[a-zA-Z]{2,3}/.exec(msg);
   if (langSearch) lang = langSearch[0];
 
-  const handleOcrResult = ret =>
-    replyMsg(context, ret.join('\n')).catch(e => {
-      replyMsg(context, 'OCRは死んだ');
-      console.error(`${global.getTime()} [error] OCR`);
-      console.error(e);
-    });
-
   for (const img of imgs) {
-    ocr.default(img, lang).then(handleOcrResult);
+    ocr
+      .default(img, lang)
+      .then(results => replyMsg(context, results.join('\n')))
+      .catch(e => {
+        replyMsg(context, 'OCRは死んだ');
+        console.error(`${global.getTime()} [error] OCR`);
+        console.error(e);
+      });
   }
 }
 
@@ -660,7 +659,7 @@ function sendMsg2Admin(message) {
  * @param {boolean} at 是否at发送者
  * @param {boolean} reply 是否使用回复形式
  */
-function replyMsg(context, message, at = false, reply = false) {
+async function replyMsg(context, message, at = false, reply = false) {
   if (!bot.isReady() || typeof message !== 'string' || message.length === 0) return;
   if (context.message_type !== 'private') {
     message = `${reply ? CQ.reply(context.message_id) : ''}${at ? CQ.at(context.user_id) : ''}${message}`;
