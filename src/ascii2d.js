@@ -76,7 +76,7 @@ function getResult({ url, title, author, thumbnail, author_url }, snLowAcc = fal
   } 
   texts.push(`来源：${pixivShorten(url)}`);
   if (author_url) {
-    const tweetSearch = /(twitter.+intent\/user\?user_id=([0-9]+))|(al.dmm.co.jp.+)|(seiga.nicovideo.+)/.test(author_url);
+    const tweetSearch = /(twitter.+intent\/user\?user_id=([0-9]+))|(al.dmm.co.jp.+)|(seiga.nicovideo.+)|(amazon.jp.+)/.test(author_url);
     if (!tweetSearch) texts.push(`作者：${pixivShorten(author_url)}`);
   }
   return { success: true, result: texts.join('\n') };
