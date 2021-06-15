@@ -85,6 +85,9 @@ async function doSearch(imgURL, db, debug = false) {
               member_id, // 可能 pixiv uid
               eng_name, // 本子名
               jp_name, // 本子名
+              source: sourceTitle, // 标题
+              author, // 作者
+              artist, // 作者
             },
           } = data.results[0];
           const simText = similarity.toFixed(2);
@@ -133,12 +136,9 @@ async function doSearch(imgURL, db, debug = false) {
             source = await getSource(url).catch(() => null);
           }
 
-          if (!title) title = ' 結果';
-          //if (!title) title = url.indexOf('anidb.net') === -1 ? ' 結果' : ' AniDB結果';
-
-          const doujinName = jp_name || eng_name; // 本子名
-
-          if (member_name && member_name.length > 0) title = `\n「${title}」/「${member_name}」`;
+          title = title || sourceTitle;
+          author = member_name || author || artist;
+          if (author && author.length) title = `「${title}」/「${author}」`;
 
           // 剩余搜图次数
           if (long_remaining < 20) warnMsg += `saucenao-${hostIndex}：あんたは一日${long_remaining}回の男だよ\n`;
@@ -157,7 +157,7 @@ async function doSearch(imgURL, db, debug = false) {
           // 回复的消息
           msg = await getShareText({
             url,
-            title: `SauceNAO (${simText}%)${title}`,
+            title: [`SauceNAO (${simText}%)`, title].filter(v => v).join('\n'),
             thumbnail:
               global.config.bot.hideImgWhenLowAcc && similarity < global.config.bot.saucenaoLowAcc ? null : thumbnail,
             author_url: member_id && url.indexOf('pixiv.net') >= 0 ? `https://pixiv.net/u/${member_id}` : null,
@@ -167,6 +167,7 @@ async function doSearch(imgURL, db, debug = false) {
           success = true;
 
           // 如果是本子
+          const doujinName = jp_name || eng_name; // 本子名
           if (doujinName) {
             if (global.config.bot.getDojinDetailFromNhentai) {
               const searchName = (eng_name || jp_name).replace('(English)', '').replace(/_/g, '/');
