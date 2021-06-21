@@ -12,7 +12,7 @@ export default ctx => {
 
     stop = true;
 
-    const replyMsg = await random(file, 10);
+    const replyMsg = random(file, 10);
     if (replyMsg.length) global.replyMsg(ctx, replyMsg, true);
     break;
   }
