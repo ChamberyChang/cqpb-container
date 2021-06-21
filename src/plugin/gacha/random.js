@@ -1,6 +1,6 @@
 import Fse from 'fs-extra';
 import Path from 'path';
-import JSTAT from 'jStat';
+import JSTAT from 'jstat';
 
 // 取得牌库
 function getDecks(name) {
