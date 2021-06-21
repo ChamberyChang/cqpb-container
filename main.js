@@ -16,6 +16,7 @@ import minimist from 'minimist';
 import { rmdHandler } from './src/plugin/reminder';
 import broadcast from './src/broadcast';
 import bilibiliHandler from './src/plugin/bilibili';
+import gacha from './src/plugin/gacha';
 import logError from './src/logError';
 import event from './src/event';
 import corpus from './src/plugin/corpus';
@@ -147,6 +148,9 @@ async function commonHandle(e, context) {
 
   // 语言库
   if (corpus(context)) return true;
+
+  // 抽卡游戏
+  if (gacha(context)) return true;
 
   // 兼容其他机器人
   const startChar = context.message.charAt(0);
