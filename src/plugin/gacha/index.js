@@ -8,7 +8,10 @@ export default ctx => {
   for (let { file, name } of decks) {
     if ([file, name].some(v => !(typeof v === 'string' && v.length))) continue;
 
-    if (!ctx.includes(name) || !ctx.includes('十连') || !ctx.includes('抽卡')) continue;
+    const regexp = "/^" + name + "模拟抽卡$/g"
+    const reg = new RegExp(regexp);
+    const exec = reg.exec(ctx.message);
+    if (!exec) continue;
 
     stop = true;
 
