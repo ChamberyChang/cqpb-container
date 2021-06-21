@@ -227,12 +227,7 @@
       "getLiveRoomInfo": false
     },
     //抽卡游戏
-    "gacha": {
-      // 是否启用
-      "enable": false,
-      // 牌库
-      "decks": []
-    },
+    "gacha": [],
     // 语言库（自动回复），请查看“wiki-附加功能-语言库（自动回复）”以了解更多
     "corpus": []
   },
