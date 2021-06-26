@@ -8,7 +8,7 @@ export default ctx => {
   for (let { file, name } of decks) {
     if ([file, name].some(v => !(typeof v === 'string' && v.length))) continue;
 
-    const regexp = "(^" + name + "模拟十连$)"
+    const regexp = "(^" + name + "模[拟擬]十[连連]$)"
     const reg = new RegExp(regexp);
     const exec = reg.exec(ctx.message);
     if (!exec) continue;
