@@ -5,17 +5,16 @@ export default ctx => {
   const decks = global.config.bot.gacha;
   let stop = false;
 
-  for (let { file, name } of decks) {
-    if ([file, name].some(v => !(typeof v === 'string' && v.length))) continue;
+  for (let { file, regexp, freq } of decks) {
+    if ([file, regexp, freq].some(v => !(typeof v === 'string' && v.length))) continue;
 
-    const regexp = "(^" + name + "模[拟擬]十[连連]$)"
     const reg = new RegExp(regexp);
     const exec = reg.exec(ctx.message);
     if (!exec) continue;
 
     stop = true;
 
-    const replyMsg = random(file, 10);
+    const replyMsg = random( file, freq );
     if (replyMsg.length) global.replyMsg(ctx, replyMsg, true);
     break;
   }
