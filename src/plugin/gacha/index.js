@@ -8,7 +8,8 @@ export default ctx => {
   for (let { file, regexp, freq } of decks) {
     if ([file, regexp, freq].some(v => !(typeof v === 'string' && v.length))) continue;
 
-    const reg = new RegExp(regexp);
+    const regStyle = "(^" + regexp + "$)";
+    const reg = new RegExp(regStyle);
     const exec = reg.exec(ctx.message);
     if (!exec) continue;
 
