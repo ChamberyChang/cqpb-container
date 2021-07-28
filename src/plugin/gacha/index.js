@@ -15,7 +15,7 @@ export default ctx => {
 
     stop = true;
 
-    const replyMsg = random( file, Number(freq) );
+    const replyMsg = random(file, parseInt(freq, 10));
     if (replyMsg.length) global.replyMsg(ctx, replyMsg, true);
     break;
   }
