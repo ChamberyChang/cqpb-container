@@ -22,9 +22,9 @@ async function diceHandler(context) {
     if (diceAssay) {
         const randDice = rand.intBetween(1, 100);
         diceMsg.push(randDice);
-        if(randDice >= ~~diceAssay[1]) diceMsg.push(`成功`); 
-        else diceMsg.push(`失败`); 
-        global.replyMsg(context, diceMsg.join(' '), true);
+        if(randDice >= ~~diceAssay[1]) diceMsg.push(`\n成功`); 
+        else diceMsg.push(`\n失败`); 
+        global.replyMsg(context, diceMsg.join(''), true);
         return true;
     }
 }
