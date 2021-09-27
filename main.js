@@ -17,6 +17,7 @@ import { rmdHandler } from './src/plugin/reminder';
 import broadcast from './src/broadcast';
 import bilibiliHandler from './src/plugin/bilibili';
 import gacha from './src/plugin/gacha';
+import diceHandler from './src/plugin/dice';
 import logError from './src/logError';
 import event from './src/event';
 import corpus from './src/plugin/corpus';
@@ -191,6 +192,9 @@ https://github.com/Tsuk1ko/cq-picsearcher-bot`);
 
   //  反哔哩哔哩小程序
   if (await bilibiliHandler(context)) return true;
+
+  //  骰子
+  if (await diceHandler(context)) return true;
 
   return false;
 }
