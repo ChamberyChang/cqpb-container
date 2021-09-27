@@ -5,7 +5,7 @@ const rand = RandomSeed.create();
 
 async function diceHandler(context) {
     
-    const msg = context;
+    const msg = context.message;
     const diceSearch = /(?<=投掷)([1-9])d((?!0+(?:[:.]0+)?$)[0-9]{1,3})$/.exec(msg);
     const diceMsg = [`投掷结果为`];
 
