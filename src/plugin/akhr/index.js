@@ -155,6 +155,31 @@ const ERROR_MAP = {
   滅速: '減速',
   枳械: '机械',
   冫口了: '治疗',
+  先鋒: '先锋',
+  前衛: '近卫',
+  狙撃: '狙击',
+  医療: '医疗',
+  補助: '辅助',
+  術師: '术师',
+  特殊: '特种',
+  タイプ: '干员',
+  近距離: '近战位',
+  遠距離: '远程位',
+  火力: '输出',
+  防御: '防护',
+  COST回復: '费用回复',
+  治療: '治疗',
+  弱化: '削弱',
+  強制移動: '位移',
+  牽制: '控场',
+  爆発力: '爆发',
+  爆凳力:'爆发',
+  召喚: '召唤',
+  高速再配置: '快速复活',
+  初期: '新手',
+  ロボット: '支援机械',
+  エリート: '资深干员',
+  上級: '高级',
 };
 
 function getResultImg(words) {
@@ -165,32 +190,8 @@ function getResultImg(words) {
       w = _.reduce(ERROR_MAP, (cur, correct, error) => cur.replace(error, correct), w);
       w = w.replace(excludeRegExp, '');
       //  支持日服词条  
-      w = w.replace(/先鋒([夕タ][亻イ][ブプ]?)?/g, '先锋干员');
-      w = w.replace(/前衛([夕タ][亻イ][ブプ]?)?/g, '近卫干员');
-      w = w.replace(/狙撃([夕タ][亻イ][ブプ]?)?/g, '狙击干员');
-      w = w.replace(/重装([夕タ][亻イ][ブプ]?)?/g, '重装干员');
-      w = w.replace(/医療([夕タ][亻イ][ブプ]?)?/g, '医疗干员');
-      w = w.replace(/補助([夕タ][亻イ][ブプ]?)?/g, '辅助干员');
-      w = w.replace(/術師([夕タ][亻イ][ブプ]?)?/g, '术师干员');
-      w = w.replace(/特殊([夕タ][亻イ][ブプ]?)?/g, '特种干员');
-      w = w.replace('近距離', '近战位');
-      w = w.replace('遠距離', '远程位');
-      w = w.replace('火力', '输出');
-      w = w.replace('防御', '防护');
+      w = w.replace(/([夕タ][亻イ][ブプ]?)/g, '干员');
       w = w.replace(/範囲(攻擊)?/g, '群攻');
-      w = w.replace('COST回復', '费用回复');
-      w = w.replace('治療', '治疗');
-      w = w.replace('弱化', '削弱');
-      w = w.replace('減速', '减速');
-      w = w.replace('強制移動', '位移');
-      w = w.replace('牽制', '控场');
-      w = w.replace('爆発力', '爆发');
-      w = w.replace('召喚', '召唤');
-      w = w.replace('高速再配置', '快速复活');
-      w = w.replace('初期', '新手');
-      w = w.replace('ロボット', '支援机械');
-      w = w.replace('エリート', '资深干员');
-      w = w.replace('上級エリート', '高级资深干员');
       //  for baidu OCR
       if (w.includes(GJZS) && w.length > 6) {
         a.push(GJZS);
