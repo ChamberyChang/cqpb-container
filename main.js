@@ -166,7 +166,15 @@ async function commonHandle(e, context) {
   }
   if (context.message === '--help+') {
     replyMsg(context, `搜索图片可用参数
---a2d/--pixiv/--danbooru/--doujin/--anime/--ocr--lang=语种`);
+--a2d/--pixiv/--danbooru/--doujin/--anime/--ocr[回车]--lang=语种`);
+    return true;
+  }
+  if (context.message === '--help++') {
+    replyMsg(context, `娱乐功能说明\n
+明日方舟公招：--akhr[回车]--lang=语种\n
+抽卡模拟：[牌组名]模拟十连\n
+塔罗牌：翻开塔罗牌\n
+骰子：.r 1d100，.ra xxx 50等等`);
     return true;
   }
   if (context.message === '--version') {
