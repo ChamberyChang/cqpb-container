@@ -170,10 +170,10 @@ async function commonHandle(e, context) {
     return true;
   }
   if (context.message === '--help++') {
-    replyMsg(context, `娱乐功能说明\n
-明日方舟公招：--akhr[回车]--lang=语种\n
-抽卡模拟：[牌组名]模拟十连\n
-塔罗牌：翻开塔罗牌\n
+    replyMsg(context, `娱乐功能说明
+明日方舟公招：--akhr[回车]--lang=语种
+抽卡模拟：[牌组名]模拟十连
+塔罗牌：翻开塔罗牌
 骰子：.r 1d100，.ra xxx 50等等`);
     return true;
   }
