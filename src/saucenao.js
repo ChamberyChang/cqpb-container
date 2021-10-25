@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import nhentai from './nhentai';
 import getSource from './getSource';
-import CQ from './CQcode';
 import pixivShorten from './urlShorten/pixiv';
 import logError from './logError';
+import { getCqImg64FromUrl } from './utils/image';
 const Axios = require('./axiosProxy');
 
 let hostsI = 0;
@@ -253,8 +253,9 @@ async function confuseURL(url) {
 
 async function getShareText({ url, title, thumbnail, author_url, source }) {
   const texts = [title];
-  if (thumbnail && !global.config.bot.hideImg) texts.push(CQ.img(thumbnail));
-  //else texts.push(`预览：${await confuseURL(thumbnail)}`);
+  if (thumbnail && !global.config.bot.hideImg) {
+    texts.push(await getCqImg64FromUrl(thumbnail));
+  }
   if (url) texts.push(await confuseURL(url));
   if (author_url) texts.push(`作者：${await confuseURL(author_url)}`);
   if (source) texts.push(`来源：${await confuseURL(source)}`);
