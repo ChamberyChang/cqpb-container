@@ -87,7 +87,7 @@ async function checkDynamic() {
     for (const dynamic of dynamics) {
       for (const gid of gids) {
         tasks.push(() =>
-          global.sendMsg(gid, dynamic).catch(e => {
+          global.sendGroupMsg(gid, dynamic).catch(e => {
             logError(`${global.getTime()} [error] bilibili push dynamic to group ${gid}`);
             logError(e);
           })
@@ -115,7 +115,7 @@ async function checkLive() {
     if (status && !oldStatus) {
       for (const gid of gids) {
         tasks.push(() =>
-          global.sendMsg(gid, [CQ.img(cover), `【${name}】${title}`, url].join('\n')).catch(e => {
+          global.sendGroupMsg(gid, [CQ.img(cover), `【${name}】${title}`, url].join('\n')).catch(e => {
             logError(`${global.getTime()} [error] bilibili push live status to group ${gid}`);
             logError(e);
           })

@@ -39,7 +39,7 @@ globalReg({
   replySearchMsgs,
   sendGroupForwardMsg,
   sendGroupMsg,
-  sendMsg,
+  sendPrivateMsg,
 });
 
 // 好友请求
@@ -662,10 +662,7 @@ function hasImage(msg) {
 function sendMsg2Admin(message) {
   const admin = global.config.bot.admin;
   if (bot.isReady() && admin > 0 && admin !== bot._qq) {
-    bot('send_private_msg', {
-      user_id: admin,
-      message,
-    });
+    global.sendPrivateMsg(admin, message);
   }
 }
 
@@ -772,9 +769,9 @@ function sendGroupMsg(group_id, message) {
   });
 }
 
-function sendMsg(qid, message) {
-  return bot('send_msg', {
-    qid,
+function sendPrivateMsg(user_id, message) {
+  return bot('send_private_msg', {
+    user_id,
     message,
   });
 }
