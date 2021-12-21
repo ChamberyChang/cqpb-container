@@ -90,7 +90,7 @@ async function checkDynamic() {
     console.log('dynamics', uid, dynamics);
     for (const dynamic of dynamics) {
       for (const gid of gids) {
-        if (pushConfig.pm[uid].indexOf(gid) > -1) {
+        if (_.flatMap(_.values(pushConfig.pm)).includes(gid)) {
           tasks.push(() =>
             global.sendPrivateMsg(gid, dynamic).catch(e => {
               logError(`${global.getTime()} [error] bilibili push dynamic to user ${gid}`);
@@ -127,7 +127,7 @@ async function checkLive() {
     liveStatusMap.set(uid, status);
     if (status && !oldStatus) {
       for (const gid of gids) {
-        if (pushConfig.pm[uid].indexOf(gid) > -1) {
+        if (_.flatMap(_.values(pushConfig.pm)).includes(gid)) {
           tasks.push(() =>
             global.sendPrivateMsg(gid, [CQ.img(cover), `【${name}】${title}`, url].join('\n')).catch(e => {
               logError(`${global.getTime()} [error] bilibili push live status to user ${gid}`);
