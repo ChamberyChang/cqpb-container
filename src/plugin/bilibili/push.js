@@ -93,7 +93,7 @@ async function checkDynamic() {
         if (pushConfig.pm[uid].indexOf(gid) > -1) {
           tasks.push(() =>
             global.sendPrivateMsg(gid, dynamic).catch(e => {
-              logError(`${global.getTime()} [error] bilibili push dynamic to group ${gid}`);
+              logError(`${global.getTime()} [error] bilibili push dynamic to user ${gid}`);
               logError(e);
             })
           );
@@ -130,7 +130,7 @@ async function checkLive() {
         if (pushConfig.pm[uid].indexOf(gid) > -1) {
           tasks.push(() =>
             global.sendPrivateMsg(gid, [CQ.img(cover), `【${name}】${title}`, url].join('\n')).catch(e => {
-              logError(`${global.getTime()} [error] bilibili push live status to group ${gid}`);
+              logError(`${global.getTime()} [error] bilibili push live status to user ${gid}`);
               logError(e);
             })
           );
