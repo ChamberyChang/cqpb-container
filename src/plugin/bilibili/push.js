@@ -18,13 +18,12 @@ function init() {
     checkPushTask = null;
   }
   pushConfig = getPushConfig();
-  // TODO: remove dev log
-  console.log('pushConfig: ', pushConfig);
   for (const uid of liveStatusMap.keys()) {
     if (!(uid in pushConfig.live)) liveStatusMap.delete(uid);
   }
   if (_.size(pushConfig.dynamic) || _.size(pushConfig.live)) {
     checkPushTask = setInterval(checkPush, Math.max(global.config.bot.bilibili.pushCheckInterval, 30) * 1000);
+    checkPush();
   }
 }
 
@@ -86,8 +85,6 @@ async function checkDynamic() {
   for (const [uid, gids] of Object.entries(pushConfig.dynamic)) {
     const dynamics = dynamicMap[uid];
     if (!dynamics || !dynamics.length) continue;
-    // TODO: remove dev log
-    console.log('dynamics', uid, dynamics);
     for (const dynamic of dynamics) {
       for (const gid of gids) {
         if (_.flatMap(_.values(pushConfig.pm)).includes(gid)) {
