@@ -43,7 +43,7 @@ function getPushConfig() {
       } else if (typeof conf === 'object' && typeof conf.gid === 'number') {
         if (conf.dynamic === true) dynamic[uid].push({ gid: conf.gid, atAll: conf.dynamicAtAll });
         if (conf.live === true) live[uid].push({ gid: conf.gid, atAll: conf.liveAtAll });
-        if (conf.pm === true) pm[uid].push({gid: conf.gid});
+        if (conf.pm === true) pm[uid].push({ gid: conf.gid });
       }
     });
     if (!dynamic[uid].length) delete dynamic[uid];
