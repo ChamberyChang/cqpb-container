@@ -43,7 +43,7 @@ function getPushConfig() {
       } else if (typeof conf === 'object' && typeof conf.gid === 'number') {
         if (conf.dynamic === true) dynamic[uid].push({ gid: conf.gid, atAll: conf.dynamicAtAll });
         if (conf.live === true) live[uid].push({ gid: conf.gid, atAll: conf.liveAtAll });
-        if (conf.pm === true) pm[uid].push(conf.gid);
+        if (conf.pm === true) pm[uid].push({gid: conf.gid});
       }
     });
     if (!dynamic[uid].length) delete dynamic[uid];
@@ -125,13 +125,13 @@ async function checkLive() {
     if (status && !oldStatus) {
       for (const { gid, atAll } of confs) {
         if (_.flatMap(_.values(pushConfig.pm)).includes(gid)) {
-        tasks.push(() =>
-          global
-            .sendGroupMsg(gid, [CQ.img(cover), `【${name}】${title}`, url, ...(atAll ? [CQ.atAll()] : [])].join('\n'))
-            .catch(e => {
-              logError(`${global.getTime()} [error] bilibili push live status to group ${gid}`);
-              logError(e);
-            })
+          tasks.push(() =>
+            global
+              .sendGroupMsg(gid, [CQ.img(cover), `【${name}】${title}`, url, ...(atAll ? [CQ.atAll()] : [])].join('\n'))
+              .catch(e => {
+                logError(`${global.getTime()} [error] bilibili push live status to group ${gid}`);
+                logError(e);
+              })
           );
         } else {
           tasks.push(() =>
