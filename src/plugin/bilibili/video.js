@@ -21,7 +21,6 @@ export const getVideoInfo = param => {
       }) => ({
         ids: [aid, bvid],
         reply: `${CQ.img(pic)}
-av${aid}
 ${CQ.escape(title)}
 UP：${CQ.escape(name)}
 ${humanNum(view)}播放 ${humanNum(danmaku)}弹幕
@@ -49,7 +48,6 @@ export const getSearchVideoInfo = keyword =>
         return {
           ids: [aid, bvid],
           reply: `${CQ.img(`http:${pic}`)}
-（搜索）av${aid}
 ${CQ.escape(title.replace(/<([^>]+?)[^>]+>(.*?)<\/\1>/g, '$2'))}
 UP：${CQ.escape(author)}
 ${humanNum(play)}播放 ${humanNum(video_review)}弹幕
