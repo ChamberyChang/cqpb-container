@@ -170,21 +170,36 @@ async function commonHandle(e, context) {
 
   // 通用指令
   if (context.message === '--help') {
-    replyMsg(context, `私聊：直接发送图片
-群组：@机器人的同时发送图片
-一条消息中包含多张图片会批量搜索`);
+    replyMsg(context, `--help-pic：查看搜图相关说明
+--help-dice：查看骰子相关说明
+--help-other：你爱看不看吧`);
   return true;
   }
-  if (context.message === '--help+') {
-    replyMsg(context, `搜索图片可用参数
---a2d/--pixiv/--danbooru/--doujin/--anime/--ocr[回车]--lang=语种`);
+  if (context.message === '--help-pic') {
+    replyMsg(context, `私聊：直接发送图片
+群组：@机器人的同时发送图片
+一条消息中包含多张图片会批量搜索
+可加塞以下参数来指定模式
+--a2d/--pixiv/--danbooru/--doujin/--anime`);
+  return true;
+  }
+  if (context.message === '--help-other') {
+    replyMsg(context, `明日方舟公招：--akhr[回车]--lang=语种
+抽卡模拟：[牌组名]模拟十连
+塔罗牌：今日运势
+菜单：今天（早上/中午/晚上）吃什么`);
     return true;
   }
-  if (context.message === '--help++') {
-    replyMsg(context, `娱乐功能说明
-明日方舟公招：--akhr[回车]--lang=语种
-抽卡模拟：[牌组名]模拟十连
-骰子：.r 1d100或者.ra xxx 50等等`);
+  if (context.message === '--help-dice') {
+    replyMsg(context, `以下指令不区分大小写
+-r：投掷一个一百面的骰子
+-rd10：投掷一个1到10面的骰子
+-r3d6：投掷3个1到6面的骰子
+-r3d2+8：投掷3个1到8面的骰子，然后在结果上加8
+-rd100[空格]80：用一项80点的属性或技能进行检定
+-ra[空格][技能或属性]：投掷一个1d100，然后直接进行成功检定
+-sc1/1d3[空格]45：代表进行一次Sancheck，成功掉1，失败掉1d3
+-COC7：生成COC7版的人物属性`);
     return true;
   }
   if (context.message === '--version') {
@@ -192,8 +207,7 @@ async function commonHandle(e, context) {
     return true;
   }
   if (context.message === '--about') {
-    replyMsg(context, `本项目为加塞私货劣化版
-欢迎参考源码自行搭建：
+    replyMsg(context, `项目源码&原版说明：
 https://github.com/Tsuk1ko/cq-picsearcher-bot`);
     return true;
   }

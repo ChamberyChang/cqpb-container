@@ -24,7 +24,7 @@ async function diceHandler(context) {
         diceMsg.push(randDice);
         if(randDice >= ~~diceAssay[1]) diceMsg.push(`\n成功`); 
         else diceMsg.push(`\n失败`); 
-        global.replyMsg(context, diceMsg.join(''), true);
+        global.replyMsg(context, diceMsg.join(''), false, reply);
         return true;
     }
 }
