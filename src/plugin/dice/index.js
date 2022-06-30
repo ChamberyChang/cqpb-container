@@ -3,7 +3,7 @@ import RandomSeed from 'random-seed';
 
 const rand = RandomSeed.create();
 
-async function diceHandler(context) {
+async function diceHandler(context, reply = true) {
     
     const msg = context.message;
     const diceSearch = /(?<=投掷|\.[Rr])[\s]*?([1-9])[Dd]((?!0+(?:[:.]0+)?$)[0-9]{1,3})$/.exec(msg);
@@ -15,7 +15,7 @@ async function diceHandler(context) {
             const randDice = rand.intBetween(1, ~~diceSearch[2]);
             diceMsg.push(randDice);
         }
-        global.replyMsg(context, diceMsg.join('\n'), true);
+        global.replyMsg(context, diceMsg.join('\n'), false, reply);
         return true;
     }
 
