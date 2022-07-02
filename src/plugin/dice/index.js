@@ -12,7 +12,7 @@ const rand = RandomSeed.create();
  * @returns
  */
 async function diceHandler(context, reply = true) {
-  var msg = new String(context).toLowerCase();
+  var msg = new String(context.message).toLowerCase();
   var res = "";
   if (msg[0] == '-' && msg[1] == '-') {
     var commands = new String(msg).substring(2, msg.length);
