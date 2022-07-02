@@ -13,52 +13,38 @@ const rand = RandomSeed.create();
  */
 async function diceHandler(context, reply = true) {
   var msg = new String(context).toLowerCase();
+  var res = "";
   if (msg[0] == '-' && msg[1] == '-') {
     var commands = new String(msg).substring(2, msg.length);
-    console.log(`Commands Received: ${commands}`);
     if (commands[0] == 'r') {
       if (commands[1] == 'h') {
         //暗骰
-        Roll(new String(commands).substring(2, commands.length)) 
-        .then(res => {
-          global.replyPrivateForwardMsgs(context, res);
-          return true;
-        })
-        .catch(e => console.error(e));
+        res = await Roll(new String(commands).substring(2, commands.length));
+        global.replyPrivateForwardMsgs(context, res);
+        return true;
       } else if (commands[1] == 'a') {
         //检定骰D20
-        Assay(new String(commands).substring(2, commands.length))
-        .then(res => {
-          global.replyMsg(context, res, false, reply);
-          return true;
-        })
-        .catch(e => console.error(e));
-      } else if (commands[1] == 'c') {
-        //检定骰D100
-        Check(new String(commands).substring(2, commands.length))
-        .then(res => {
-          global.replyMsg(context, res, false, reply);
-          return true;
-        })
-        .catch(e => console.error(e));
-      } else {
-        //正常投点
-        Roll(new String(commands).substring(1, commands.length))
-        .then(res => {
-          global.replyMsg(context, res, false, reply);
-          return true;
-        })
-        .catch(e => console.error(e));
-      }
-    } else if (commands[0] == "s" && commands[1] == "c") {
-      SanCheck(new String(commands).substring(2, commands.length))
-      .then(res => {
+        res = await Assay(new String(commands).substring(2, commands.length));
         global.replyMsg(context, res, false, reply);
         return true;
-      })
-      .catch(e => console.error(e));
+      } else if (commands[1] == 'c') {
+        //检定骰D100
+        res = await Check(new String(commands).substring(2, commands.length));
+        global.replyMsg(context, res, false, reply);
+        return true;
+      } else {
+        //正常投点
+        res = await Roll(new String(commands).substring(1, commands.length));
+        global.replyMsg(context, res, false, reply);
+        return true;
+      }
+    } else if (commands[0] == "s" && commands[1] == "c") {
+      res = await SanCheck(new String(commands).substring(2, commands.length));
+      global.replyMsg(context, res, false, reply);
+      return true;
     }
   }
+  return false;
 }
 
 /**
