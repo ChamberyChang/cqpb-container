@@ -107,13 +107,13 @@ function Compare(Sum, skill, SumMax=100) {
   } else if (Sum <= SumMax-2 && Sum > skill) {
     result = "**失败**"
     return result;
-  } else if (Sum <= skill / 5 && Sum <= skill) {
+  } else if (Sum > skill * 4/5 && Sum <= skill) {
     result = "**炼狱**";
     return result;
-  } else if (Sum <= skill / 2 && Sum > skill / 5 && Sum <= skill) {
+  } else if (Sum > skill / 2 && Sum <= skill * 4/5) {
     result = "**困难**";
     return result;
-  } else if (Sum > skill / 2 && Sum <= skill) {
+  } else if (Sum > 2 && Sum <= skill / 2) {
     result = "**成功**";
     return result;
   } else if (Sum <= 2 && Sum <= skill) {
