@@ -20,27 +20,42 @@ async function diceHandler(context, reply = true) {
       if (commands[1] == 'h') {
         //暗骰
         Roll(new String(commands).substring(2, commands.length)) 
-        .then(res => global.replyPrivateForwardMsgs(context, res))
+        .then(res => {
+          global.replyPrivateForwardMsgs(context, res);
+          return true;
+        })
         .catch(e => console.error(e));
       } else if (commands[1] == 'a') {
         //检定骰D20
         Assay(new String(commands).substring(2, commands.length))
-        .then(res => global.replyMsg(context, res, false, reply))
+        .then(res => {
+          global.replyMsg(context, res, false, reply);
+          return true;
+        })
         .catch(e => console.error(e));
       } else if (commands[1] == 'c') {
         //检定骰D100
         Check(new String(commands).substring(2, commands.length))
-        .then(res => global.replyMsg(context, res, false, reply))
+        .then(res => {
+          global.replyMsg(context, res, false, reply);
+          return true;
+        })
         .catch(e => console.error(e));
       } else {
         //正常投点
         Roll(new String(commands).substring(1, commands.length))
-        .then(res => global.replyMsg(context, res, false, reply))
+        .then(res => {
+          global.replyMsg(context, res, false, reply);
+          return true;
+        })
         .catch(e => console.error(e));
       }
     } else if (commands[0] == "s" && commands[1] == "c") {
       SanCheck(new String(commands).substring(2, commands.length))
-      .then(res => global.replyMsg(context, res, false, reply))
+      .then(res => {
+        global.replyMsg(context, res, false, reply);
+        return true;
+      })
       .catch(e => console.error(e));
     }
   }
