@@ -43,7 +43,7 @@ export default async (i) => {
           Text += " 巨大成功\nSanCheck检定：";
           if (numExec.test(sl[0])) {
             var Int = parseInt(sl[0]);
-            var skill = parseInt(sc[1]);
+            var skill = parseInt(sl[1]);
             Text += `最小值 ${sp[0]}\n最终San值：${sp[1]} - ${sp[0]} = ${(skill - Int).toString()}`;
           } else {
             var ft = sp[0].split("d");
@@ -60,12 +60,12 @@ export default async (i) => {
           if (numExec.test(sp[0])) { //sc[sl0]/[sp0][/s][sp1]
             var Int = parseInt(sp[0]);
             var skill = parseInt(sp[1]);
-            Text += sp[0] + `\n最终San值：${sp[1]} - ${sp[0]} = ${(skill - Int).toString()}`;
+            Text += sp[0]+`\n最终San值：${sp[1]}-${sp[0]}=${(skill - Int).toString()}`;
           } else {
             var ft = sp[0].split("d");
             if (ft.length == 2) { //sc[sl0]/[ft0]d[ft1][/s][sp1]
               if (numExec.test(ft[0]) && numExec.test(ft[1])) {
-                Text += sp[0] + " = (";
+                Text += sp[0] + "=(";
                 var diceNum = parseInt(ft[0]);
                 var diceSide = parseInt(ft[1]);
                 var Sum = 0;
@@ -74,9 +74,9 @@ export default async (i) => {
                   var ran = rand.intBetween(0, diceSide);;
                   Sum += ran;
                   if (index < diceNum - 1) {
-                    Text += `${ran.toString()} + `;
+                    Text += `${ran.toString()}+`;
                   } else if (index == diceNum - 1) {
-                    Text += `${ran.toString()}) = `;
+                    Text += `${ran.toString()})=`;
                   }
                 }
                 Text += `${Sum.toString()}\n最终San值：${sp[1]} - ${Sum.toString()} = ${(skill - Sum).toString()}`;
@@ -89,13 +89,13 @@ export default async (i) => {
           if (numExec.test(sl[0])) { //sc[sl0]/[sp0][/s][sp1]
             var Int = parseInt(sl[0]);
             var skill = parseInt(sp[1]);
-            Text += `${sl[0]}\n最终San值：${sp[1]} - ${sl[0]} = ${(skill - Int).toString()}`;
+            Text += `${sl[0]}\n最终San值：${sp[1]}-${sl[0]}=${(skill - Int).toString()}`;
           }
           else {
             var ft = sl[0].split("d");
             if (ft.length == 2) { //sc[ft0][ft1]/[sp0][/s][sp1]
               if (numExec.test(ft[0]) && numExec.test(ft[1])) {
-                Text += sl[0] + " = (";
+                Text += sl[0] + "=(";
                 var diceNum = parseInt(ft[0]);
                 var diceSide = parseInt(ft[1]);
                 var Sum = 0;
@@ -104,14 +104,14 @@ export default async (i) => {
                   var ran = rand.intBetween(0, diceSide);
                   Sum += ran;
                   if (index < diceNum - 1) {
-                    Text += `${ran.toString()} + `;
+                    Text += `${ran.toString()}+`;
                   }
                   else if (index == diceNum - 1) {
-                    Text += `${ran.toString()}) = `;
+                    Text += `${ran.toString()})=`;
                   }
                 }
 
-                Text += `${Sum.toString()}\n最终San值：${sp[1]} - ${Sum.toString()} = ${(skill - Sum).toString()}`;
+                Text += `${Sum.toString()}\n最终San值：${sp[1]}-${Sum.toString()}=${(skill - Sum).toString()}`;
               }
             }
           }

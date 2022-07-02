@@ -17,7 +17,7 @@ export default async (i) => {
   if (i != "") {
     var ft = new String(i).split("d");
     if (ft.length == 2) { //r[x]d[x] && r[x]d[x]+[x] && r[x]d[x][\s][x] && r[x]d[x]+[x][\s][x]
-      ////console.log("r[x]d[x] && r[x]d[x]+[x] && r[x]d[x][\s][x] && r[x]d[x]+[x][\s][x]");
+      //console.log("r[x]d[x] && r[x]d[x]+[x] && r[x]d[x][\s][x] && r[x]d[x]+[x][\s][x]");
       if (ft[0] != '' && ft[1] != '') {
         //ft[0] 骰子数
         //ft[1] 待解析
