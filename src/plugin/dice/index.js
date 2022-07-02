@@ -57,7 +57,7 @@ async function Assay(i){
     const diceAssay = /\s((?:[1-9]?\d))$/.exec(i);
     if(diceAssay) {
       if(~~diceAssay[0] <= 20){
-        const randDice = rand.intBetween(0, 20);
+        const randDice = rand.intBetween(1, 20);
         var result = Compare(randDice, ~~diceAssay[0], 20);
         if (result) {
           var Text = `投掷出了：${randDice.toString()}`;
@@ -79,7 +79,7 @@ async function Check(i){
   if (i != "") {
     const diceCheck = /\s((?:[1-9]?\d|100))$/.exec(i);
     if(diceCheck){
-      const randDice = rand.intBetween(0, 100);
+      const randDice = rand.intBetween(1, 100);
       var result = Compare(randDice, ~~diceCheck[0], 100);
       if(result){
         var Text = `投掷出了：${randDice.toString()}`;
@@ -101,23 +101,23 @@ async function Check(i){
 function Compare(Sum, skill, SumMax=100) {
   var result = '';
   if (SumMax <= 2) return false;
-  if (Sum > SumMax-1 && Sum > skill) {
-    result = "**巨大失败**";
+  if (Sum > SumMax-2 && Sum > skill) {
+    result = "**大失败**";
     return result;
-  } else if (Sum > skill) {
-    result = "**普通失败**"
+  } else if (Sum <= SumMax-2 && Sum > skill) {
+    result = "**失败**"
+    return result;
+  } else if (Sum <= skill / 5 && Sum <= skill) {
+    result = "**炼狱**";
+    return result;
+  } else if (Sum <= skill / 2 && Sum > skill / 5 && Sum <= skill) {
+    result = "**困难**";
+    return result;
+  } else if (Sum > skill / 2 && Sum <= skill) {
+    result = "**成功**";
     return result;
   } else if (Sum <= 2 && Sum <= skill) {
-    result = "**巨大成功**";
-    return result;
-  } else if (Sum > skill / 2) {
-    result = "**普通成功**";
-    return result;
-  } else if (Sum <= skill / 2 && Sum > skill / 5) {
-    result = "**困难成功**";
-    return result;
-  } else if (Sum <= skill / 5) {
-    result = "**极难成功**";
+    result = "**大成功**";
     return result;
   } else return false;
 }

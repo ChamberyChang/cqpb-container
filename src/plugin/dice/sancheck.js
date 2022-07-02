@@ -18,7 +18,7 @@ export default async (i) => {
     if (sp.length == 2 && sp[0] != "") { //sc[sl0]/[sp0][/s][sp1]
       if (numExec.test(sp[1])) {
         var skill = parseInt(sp[1]);
-        var ran = rand.intBetween(0, 100);
+        var ran = rand.intBetween(1, 100);
         Text += ran.toString();
         //深空投掷出了：45 成功
         //SanCheck检定：1d3 = 1
@@ -71,7 +71,7 @@ export default async (i) => {
                 var Sum = 0;
                 var skill = parseInt(sp[1]);
                 for (let index = 0; index < diceNum; index++) {
-                  var ran = rand.intBetween(0, diceSide);;
+                  var ran = rand.intBetween(1, diceSide);;
                   Sum += ran;
                   if (index < diceNum - 1) {
                     Text += `${ran.toString()}+`;
@@ -83,15 +83,13 @@ export default async (i) => {
               }
             }
           }
-        }
-        else if (ran <= skill) { //成功
+        } else if (ran <= skill) { //成功
           Text += " 成功\nSanCheck检定：";
           if (numExec.test(sl[0])) { //sc[sl0]/[sp0][/s][sp1]
             var Int = parseInt(sl[0]);
             var skill = parseInt(sp[1]);
             Text += `${sl[0]}\n最终San值：${sp[1]}-${sl[0]}=${(skill - Int).toString()}`;
-          }
-          else {
+          } else {
             var ft = sl[0].split("d");
             if (ft.length == 2) { //sc[ft0][ft1]/[sp0][/s][sp1]
               if (numExec.test(ft[0]) && numExec.test(ft[1])) {
@@ -101,7 +99,7 @@ export default async (i) => {
                 var Sum = 0;
                 var skill = parseInt(sp[1]);
                 for (let index = 0; index < diceNum; index++) {
-                  var ran = rand.intBetween(0, diceSide);
+                  var ran = rand.intBetween(1, diceSide);
                   Sum += ran;
                   if (index < diceNum - 1) {
                     Text += `${ran.toString()}+`;
@@ -122,4 +120,3 @@ export default async (i) => {
   }
   return false;
 }
-
