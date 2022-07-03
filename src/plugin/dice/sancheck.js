@@ -60,7 +60,7 @@ export default async (i) => {
           if (numExec.test(sp[0])) { //sc[sl0]/[sp0][/s][sp1]
             var Int = parseInt(sp[0]);
             var skill = parseInt(sp[1]);
-            Text += sp[0]+`\n最终San值：${sp[1]}-${sp[0]}=${(skill - Int).toString()}`;
+            Text += sp[0]+`\n最终San值：${sp[1]} - ${sp[0]} = ${(skill - Int).toString()}`;
           } else {
             var ft = sp[0].split("d");
             if (ft.length == 2) { //sc[sl0]/[ft0]d[ft1][/s][sp1]
@@ -88,7 +88,7 @@ export default async (i) => {
           if (numExec.test(sl[0])) { //sc[sl0]/[sp0][/s][sp1]
             var Int = parseInt(sl[0]);
             var skill = parseInt(sp[1]);
-            Text += `${sl[0]}\n最终San值：${sp[1]}-${sl[0]}=${(skill - Int).toString()}`;
+            Text += `${sl[0]}\n最终San值：${sp[1]} - ${sl[0]} = ${(skill - Int).toString()}`;
           } else {
             var ft = sl[0].split("d");
             if (ft.length == 2) { //sc[ft0][ft1]/[sp0][/s][sp1]
@@ -108,7 +108,7 @@ export default async (i) => {
                   }
                 }
 
-                Text += `${Sum.toString()}\n最终San值：${sp[1]}-${Sum.toString()}=${(skill - Sum).toString()}`;
+                Text += `${Sum.toString()}\n最终San值：${sp[1]} - ${Sum.toString()} = ${(skill - Sum).toString()}`;
               }
             }
           }
