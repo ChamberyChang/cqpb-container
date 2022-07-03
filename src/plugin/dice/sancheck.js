@@ -65,7 +65,7 @@ export default async (i) => {
             var ft = sp[0].split("d");
             if (ft.length == 2) { //sc[sl0]/[ft0]d[ft1][/s][sp1]
               if (numExec.test(ft[0]) && numExec.test(ft[1])) {
-                Text += sp[0] + "=(";
+                Text += sp[0] + " = ( ";
                 var diceNum = parseInt(ft[0]);
                 var diceSide = parseInt(ft[1]);
                 var Sum = 0;
@@ -74,9 +74,9 @@ export default async (i) => {
                   var ran = rand.intBetween(1, diceSide);;
                   Sum += ran;
                   if (index < diceNum - 1) {
-                    Text += `${ran.toString()}+`;
+                    Text += `${ran.toString()} + `;
                   } else if (index == diceNum - 1) {
-                    Text += `${ran.toString()})=`;
+                    Text += `${ran.toString()} ) = `;
                   }
                 }
                 Text += `${Sum.toString()}\n最终San值：${sp[1]} - ${Sum.toString()} = ${(skill - Sum).toString()}`;
@@ -93,7 +93,7 @@ export default async (i) => {
             var ft = sl[0].split("d");
             if (ft.length == 2) { //sc[ft0][ft1]/[sp0][/s][sp1]
               if (numExec.test(ft[0]) && numExec.test(ft[1])) {
-                Text += sl[0] + "=(";
+                Text += sl[0] + " = ( ";
                 var diceNum = parseInt(ft[0]);
                 var diceSide = parseInt(ft[1]);
                 var Sum = 0;
@@ -102,9 +102,9 @@ export default async (i) => {
                   var ran = rand.intBetween(1, diceSide);
                   Sum += ran;
                   if (index < diceNum - 1) {
-                    Text += `${ran.toString()}+`;
+                    Text += `${ran.toString()} + `;
                   } else if (index == diceNum - 1) {
-                    Text += `${ran.toString()})=`;
+                    Text += `${ran.toString()} ) = `;
                   }
                 }
 

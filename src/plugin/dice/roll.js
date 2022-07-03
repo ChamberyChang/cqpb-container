@@ -17,7 +17,7 @@ export default async (i) => {
   if (i != "") {
     var ft = new String(i).split("d");
     if (ft.length == 2) { //r[x]d[x] && r[x]d[x]+[x] && r[x]d[x][\s][x] && r[x]d[x]+[x][\s][x]
-      //console.log("r[x]d[x] && r[x]d[x]+[x] && r[x]d[x][\s][x] && r[x]d[x]+[x][\s][x]");
+      //console.log("r[x]d[x] && r[x]d[x]+[x] && r[x]d[x][/s][x] && r[x]d[x]+[x][/s][x]");
       if (ft[0] != '' && ft[1] != '') {
         //ft[0] 骰子数
         //ft[1] 待解析
@@ -32,18 +32,18 @@ export default async (i) => {
               var diceSide = parseInt(ft[1]);
               if (diceNum <= diceNumLimit && diceSide <= diceSideLimit) { //为避免服务器压力过大或被人爆破，限制一下dice的个数上限为一千个，dice的面数最多为一万面
                 var Sum = 0;
-                Text += `(`;
+                Text += `( `;
 
                 for (let index = 0; index < diceNum; index++) {
                   var ran = rand.intBetween(1, diceSide);
                   Sum += ran;
                   if (index < diceNum - 1) {
-                    Text += `${ran.toString()}+`;
+                    Text += `${ran.toString()} + `;
                   } else if (index == diceNum - 1) {
-                    Text += `${ran.toString()})`;
+                    Text += `${ran.toString()} )`;
                   }
                 }
-                Text += `=${Sum.toString()}`;
+                Text += ` = ${Sum.toString()}`;
                 return Text;
               }
             }
@@ -53,20 +53,19 @@ export default async (i) => {
               var diceNum = parseInt(ft[0]);
               var diceSide = parseInt(sp[0]);
               var skill = parseInt(sp[1]);
-
               if (diceNum <= diceNumLimit && diceSide <= diceSideLimit) { //为避免服务器压力过大或被人爆破，限制一下dice的个数上限为一千个，dice的面数最多为一万面
                 var Sum = 0;
-                Text += `(`;
+                Text += `( `;
                 for (let index = 0; index < diceNum; index++) {
                   var ran = rand.intBetween(1, diceSide);
                   Sum += ran;
                   if (index < diceNum - 1) {
-                    Text += `${ran.toString()}+`;
+                    Text += `${ran.toString()} + `;
                   } else if (index == diceNum - 1) {
-                    Text += `${ran.toString()})`;
+                    Text += `${ran.toString()} )`;
                   }
                 }
-                Text += `=${Sum.toString()}`;
+                Text += ` = ${Sum.toString()}`;
                 var result = Compare(Sum, skill, diceSide);
                 if (result) {
                   Text += `\n${result}`;
@@ -75,8 +74,8 @@ export default async (i) => {
               }
             }
           }
-        } else if (ps.length == 2) { //r[x]d[x]+[x] && r[x]d[x]+[x][\s][x]
-          //console.log("r[x]d[x]+[x] && r[x]d[x]+[x][\s][x]");
+        } else if (ps.length == 2) { //r[x]d[x]+[x] && r[x]d[x]+[x][/s][x]
+          //console.log("r[x]d[x]+[x] && r[x]d[x]+[x][/s][x]");
           var sp = ps[1].split(" ");
           if (sp.length == 1) { //r[ft0]d[ps0]+[ps1]
             //console.log("r[ft0]d[ps0]+[ps1]");
@@ -86,17 +85,17 @@ export default async (i) => {
               var plus = parseInt(ps[1]);
               if (diceNum <= diceNumLimit && diceSide <= diceSideLimit) { //为避免服务器压力过大或被人爆破，限制一下dice的个数上限为一千个，dice的面数最多为一万面
                 var Sum = 0;
-                Text += `(`;
+                Text += `( `;
                 for (let index = 0; index < diceNum; index++) {
                   var ran = rand.intBetween(1, diceSide);
                   Sum += ran;
                   if (index < diceNum - 1) {
-                    Text += `${ran.toString()}+`;
+                    Text += `${ran.toString()} + `;
                   } else if (index == diceNum - 1) {
-                    Text += `${ran.toString()})`;
+                    Text += `${ran.toString()} )`;
                   }
                 }
-                Text += `+${plus.toString()}=${(Sum + plus).toString()}`;
+                Text += ` + ${plus.toString()} = ${(Sum + plus).toString()}`;
                 return Text;
               }
             }
@@ -109,17 +108,17 @@ export default async (i) => {
               var skill = parseInt(sp[1]);
               if (diceNum <= diceNumLimit && diceSide <= diceSideLimit) { //为避免服务器压力过大或被人爆破，限制一下dice的个数上限为一千个，dice的面数最多为一万面
                 var Sum = 0;
-                Text += `(`;
+                Text += `( `;
                 for (let index = 0; index < diceNum; index++) {
                   var ran = rand.intBetween(1, diceSide);
                   Sum += ran;
                   if (index < diceNum - 1) {
-                    Text += `${ran.toString()}+`;
+                    Text += `${ran.toString()} + `;
                   } else if (index == diceNum - 1) {
-                    Text += `${ran.toString()})`;
+                    Text += `${ran.toString()} )`;
                   }
                 }
-                Text += `+${plus.toString()}=${(Sum + plus).toString()}`;
+                Text += ` + ${plus.toString()} = ${(Sum + plus).toString()}`;
                 Sum += plus;
                 var result = Compare(Sum, skill, diceSide);
                 if (result) {
@@ -148,7 +147,7 @@ export default async (i) => {
             }
           } else if (sp.length == 2) { //rd[x][/s][x]
             //console.log("rd[x][/s][x]");
-            if (numExec.test(sp[0]) && numExec.test(sp[1])) { //验证是否三者均全为数字，到此为止完全成功的话，即代表符合r[x]d[x][/s][x]格式
+            if (numExec.test(sp[0]) && numExec.test(sp[1])) { //验证是否二者均全为数字，到此为止完全成功的话，即代表符合rd[x][/s][x]格式
               var diceSide = 100;
               if (sp[0] != "") {
                 diceSide = parseInt(sp[0]);
@@ -176,7 +175,7 @@ export default async (i) => {
               if (diceSide <= diceSideLimit) { //为避免服务器压力过大或被人爆破，限制一下dice的个数上限为一千个，dice的面数最多为一万面
                 var Sum = rand.intBetween(1, diceSide);
                 Text += Sum.toString();
-                Text += `+${plus.toString()}=${(Sum + plus).toString()}`;
+                Text += ` + ${plus.toString()} = ${(Sum + plus).toString()}`;
                 Sum += plus;
                 return Text;
               }
@@ -190,7 +189,7 @@ export default async (i) => {
               if (diceSide <= diceSideLimit) { //为避免服务器压力过大或被人爆破，限制一下dice的个数上限为一千个，dice的面数最多为一万面
                 var Sum = rand.intBetween(1, diceSide);
                 Text += Sum.toString();
-                Text += `+${plus.toString()}=${(Sum + plus).toString()}`;
+                Text += ` + ${plus.toString()} = ${(Sum + plus).toString()}`;
                 Sum += plus;
                 var result = Compare(Sum, skill, diceSide);
                 if (result) {
@@ -245,7 +244,7 @@ export default async (i) => {
             if (diceSide <= diceSideLimit) { //为避免服务器压力过大或被人爆破，限制一下dice的个数上限为一千个，dice的面数最多为一万面
               var Sum = rand.intBetween(1, diceSide);
               Text += Sum.toString();
-              Text += `+${plus.toString()}=${(Sum + plus).toString()}`;
+              Text += ` + ${plus.toString()} = ${(Sum + plus).toString()}`;
               Sum += plus;
               return Text;
             }
@@ -259,7 +258,7 @@ export default async (i) => {
             if (diceSide <= diceSideLimit) { //为避免服务器压力过大或被人爆破，限制一下dice的个数上限为一千个，dice的面数最多为一万面
               var Sum = rand.intBetween(1, diceSide);
               Text += Sum.toString();
-              Text += `+${plus.toString()}=${(Sum + plus).toString()}`;
+              Text += ` + ${plus.toString()} = ${(Sum + plus).toString()}`;
               Sum += plus;
               var result = Compare(Sum, skill, diceSide);
               if (result) {
@@ -274,8 +273,7 @@ export default async (i) => {
     return false;
   } else { //r
     //console.log("r");
-    var toudian = rand.intBetween(1, 100);
-    Text += toudian;
+    Text += rand.intBetween(1, 100);
     return Text;
   }
 }
