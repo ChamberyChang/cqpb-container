@@ -20,6 +20,7 @@ async function diceHandler(context, reply = true) {
       if (commands[1] == 'h') {
         //暗骰
         res = await Roll(new String(commands).substring(2, commands.length));
+        global.replyMsg(context, "结果将私聊发送", false, reply);
         global.sendPrivateMsg(context.user_id, res, context.group_id);
         return true;
       } else if (commands[1] == 'a') {
