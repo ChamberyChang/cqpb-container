@@ -59,7 +59,7 @@ async function Assay(i){
     if(diceAssay) {
       if(~~diceAssay[0] <= 20){
         const randDice = rand.intBetween(1, 20);
-        var result = Compare(randDice, ~~diceAssay[0], 20);
+        var result = AssayCompare(randDice, ~~diceAssay[0], 20);
         if (result) {
           var Text = `投掷出了：${randDice.toString()}`;
           Text += `\n${result}`;
@@ -81,7 +81,7 @@ async function Check(i){
     const diceCheck = /\s((?:[1-9]?\d|100))$/.exec(i);
     if(diceCheck){
       const randDice = rand.intBetween(1, 100);
-      var result = Compare(randDice, ~~diceCheck[0], 100);
+      var result = CheckCompare(randDice, ~~diceCheck[0], 100);
       if(result){
         var Text = `投掷出了：${randDice.toString()}`;
         Text += `\n${result}`;
@@ -99,16 +99,39 @@ async function Check(i){
  * @param {int} SumMax 数值上限
  * @returns
  */
-function Compare(Sum, skill, SumMax=100) {
+function AssayCompare(Sum, skill) {
   var result = '';
-  if (SumMax <= 2) return false;
-  if (Sum > SumMax-2 && Sum > skill) {
+  if (Sum > 18 && Sum > skill) {
     result = "**大失败**";
     return result;
   } else if (Sum <= 2 && Sum <= skill) {
     result = "**大成功**";
     return result;
-  } else if (Sum <= SumMax-2 && Sum > skill * 11/10) {
+  } else if (Sum <= 18 && Sum > skill * 11/10) {
+    result = "**失败**"
+    return result;
+  } else if (Sum > 2 && Sum <= skill * 9/10) {
+    result = "**成功**";
+    return result;
+  } else return false;
+}
+
+/**
+ * 判定比较
+ * @param {int} Sum 数值
+ * @param {int} skill 技能
+ * @param {int} SumMax 数值上限
+ * @returns
+ */
+function CheckCompare(Sum, skill) {
+  var result = '';
+  if (Sum > 95 && Sum > skill) {
+    result = "**大失败**";
+    return result;
+  } else if (Sum <= 5 && Sum <= skill) {
+    result = "**大成功**";
+    return result;
+  } else if (Sum <= 95 && Sum > skill * 11/10) {
     result = "**失败**"
     return result;
   } else if (Sum > skill && Sum <= skill * 11/10) {
@@ -117,7 +140,7 @@ function Compare(Sum, skill, SumMax=100) {
   } else if (Sum > skill * 9/10 && Sum <= skill) {
     result = "**困难**";
     return result;
-  } else if (Sum > 2 && Sum <= skill * 9/10) {
+  } else if (Sum > 5 && Sum <= skill * 9/10) {
     result = "**成功**";
     return result;
   } else return false;
