@@ -287,14 +287,8 @@ export default async (i) => {
  */
  function Compare(Sum, skill, SumMax=100) {
   var result = '';
-  if (SumMax <= 2) return false;
-  if (Sum > SumMax-2 && Sum > skill) {
-    result = "**大失败**";
-    return result;
-  } else if (Sum <= 2 && Sum <= skill) {
-    result = "**大成功**";
-    return result;
-  } else if (Sum <= SumMax-2 && Sum > skill) {
+  if (SumMax < 2) return false;
+  if (Sum <= SumMax-2 && Sum > skill) {
     result = "**失败**"
     return result;
   } else if (Sum > 2 && Sum <= skill) {
