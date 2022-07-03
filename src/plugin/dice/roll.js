@@ -278,3 +278,28 @@ export default async (i) => {
   }
 }
 
+/**
+ * 判定比较
+ * @param {int} Sum 数值
+ * @param {int} skill 技能
+ * @param {int} SumMax 数值上限
+ * @returns
+ */
+ function Compare(Sum, skill, SumMax=100) {
+  var result = '';
+  if (SumMax <= 2) return false;
+  if (Sum > SumMax-2 && Sum > skill) {
+    result = "**大失败**";
+    return result;
+  } else if (Sum <= 2 && Sum <= skill) {
+    result = "**大成功**";
+    return result;
+  } else if (Sum <= SumMax-2 && Sum > skill) {
+    result = "**失败**"
+    return result;
+  } else if (Sum > 2 && Sum <= skill) {
+    result = "**成功**";
+    return result;
+  } else return false;
+}
+
