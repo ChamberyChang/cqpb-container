@@ -824,7 +824,7 @@ async function replySearchMsgs(context, msgs) {
   if (msgs.length === 0) return;
   //  是否私聊回复
   if (global.config.bot.pmSearchResult && context.message_type === 'group') {
-    await replyMsg(context, '俺の勝ち！何で負けたら私聊に見てくれ！', false, true);
+    await replyMsg(context, '结果将私聊发送', false, true);
     return asyncMap(msgs, msg => {
       if (global.config.bot.debug) {
         console.log(`${global.getTime()} 回复私聊消息 qq=${context.user_id}`);
@@ -907,9 +907,10 @@ function sendGroupMsg(group_id, message) {
   });
 }
 
-function sendPrivateMsg(user_id, message) {
+function sendPrivateMsg(user_id, message, group_id = undefined) {
   return bot('send_private_msg', {
     user_id,
+    group_id,
     message,
   });
 }

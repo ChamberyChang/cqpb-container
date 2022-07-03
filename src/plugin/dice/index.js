@@ -20,7 +20,7 @@ async function diceHandler(context, reply = true) {
       if (commands[1] == 'h') {
         //暗骰
         res = await Roll(new String(commands).substring(2, commands.length));
-        global.replyPrivateForwardMsgs(context, res);
+        global.sendPrivateMsg(context.user_id, res, context.group_id);
         return true;
       } else if (commands[1] == 'a') {
         //检定骰D20
