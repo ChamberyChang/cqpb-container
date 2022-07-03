@@ -103,8 +103,7 @@ export default async (i) => {
                   Sum += ran;
                   if (index < diceNum - 1) {
                     Text += `${ran.toString()}+`;
-                  }
-                  else if (index == diceNum - 1) {
+                  } else if (index == diceNum - 1) {
                     Text += `${ran.toString()})=`;
                   }
                 }
