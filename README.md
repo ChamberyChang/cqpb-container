@@ -18,7 +18,9 @@
 - 明日方舟公开招募计算
 - 定时提醒
 - 群发消息
-- 反哔哩哔哩小程序
+- 哔哩哔哩解析
+- 哔哩哔哩推送
+- 语言库（自动回复）
 - [抽卡模拟器](https://github.com/SayaSS/CQ-gacha/)（*）
 
 详细说明请移步 [wiki](https://github.com/Tsuk1ko/cq-picsearcher-bot/wiki)
