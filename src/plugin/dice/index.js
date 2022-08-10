@@ -2,6 +2,8 @@ import _ from 'lodash';
 import RandomSeed from 'random-seed';
 import SanCheck from './sancheck';
 import Roll from './roll';
+import genDND from './genDND';
+import genCOC from './genCOC';
 
 const rand = RandomSeed.create();
 
@@ -41,6 +43,14 @@ async function diceHandler(context, reply = true) {
       }
     } else if (commands[0] == "s" && commands[1] == "c") {
       res = await SanCheck(new String(commands).substring(2, commands.length));
+      global.replyMsg(context, res, false, reply);
+      return true;
+    } else if (commands == 'coc') {
+      res = await genCOC();
+      global.replyMsg(context, res, false, reply);
+      return true;
+    } else if (commands == 'dnd') {
+      res = await genDND();
       global.replyMsg(context, res, false, reply);
       return true;
     }
