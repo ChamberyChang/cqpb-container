@@ -111,13 +111,13 @@ async function Check(i){
  */
 function AssayCompare(Sum, skill) {
   var result = '';
-  if (Sum > 18 && Sum >= skill) {
+  if (Sum > 19 && Sum >= skill) {
     result = "**大成功**";
     return result;
   } else if (Sum < 2 && Sum < skill) {
     result = "**大失败**";
     return result;
-  } else if (Sum <= 18 && Sum >= skill) {
+  } else if (Sum <= 19 && Sum >= skill) {
     result = "**成功**"
     return result;
   } else if (Sum >= 2 && Sum < skill) {
