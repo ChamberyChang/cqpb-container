@@ -6,6 +6,7 @@ import { sleep } from '../../utils/sleep';
 import { getUserNewDynamicsInfo } from './dynamic';
 import { getUserLiveData } from './live';
 import { getUserSeasonNewVideosInfo } from './season';
+import { purgeLink } from './utils';
 
 let pushConfig = { dynamic: {}, live: {}, season: {}, pm: {} };
 const liveStatusMap = new Map();
@@ -142,14 +143,20 @@ async function checkLive() {
       for (const { gid, atAll } of confs) {
         if (_.flatMap(_.values(pushConfig.pm)).includes(gid)) {
           tasks.push(() =>
-            global.sendPrivateMsg(gid, [CQ.img(cover), `【${name}】${title}`, url].join('\n')).catch(e => {
+            global.sendPrivateMsg(
+              gid,
+              [CQ.img(cover), `【${name}】${title}`, purgeLink(url), ...(atAll ? [CQ.atAll()] : [])].join('\n')
+            ).catch(e => {
               logError(`${global.getTime()} [error] bilibili push live status to group ${gid}`);
               logError(e);
             })
           );
         } else {
           tasks.push(() =>
-            global.sendGroupMsg(gid, [CQ.img(cover), `【${name}】${title}`, url, ...(atAll ? [CQ.atAll()] : [])].join('\n')).catch(e => {
+            global.sendGroupMsg(
+              gid,
+              [CQ.img(cover), `【${name}】${title}`, purgeLink(url), ...(atAll ? [CQ.atAll()] : [])].join('\n')
+            ).catch(e => {
               logError(`${global.getTime()} [error] bilibili push live status to group ${gid}`);
               logError(e);
             })

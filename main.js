@@ -57,7 +57,7 @@ bot.on('request.friend', context => {
       });
     } catch (e) {
       console.error(`${global.getTime()} 加好友请求`);
-      console.error(e);
+      logError(e);
       approve = false;
     }
   }
@@ -660,7 +660,7 @@ function doOCR(context) {
       .catch(e => {
         replyMsg(context, 'OCRは死んだ');
         console.error(`${global.getTime()} [error] OCR`);
-        console.error(e);
+        logError(e);
       });
   }
 }
@@ -682,7 +682,7 @@ function doAkhr(context) {
     const handleError = e => {
       replyMsg(context, '词条识别出现错误：\n' + e);
       console.error(`${global.getTime()} [error] Akhr`);
-      console.error(e);
+      logError(e);
     };
 
     for (const img of imgs) {
