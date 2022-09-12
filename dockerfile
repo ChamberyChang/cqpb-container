@@ -14,4 +14,4 @@ FROM common-build-stage as production-build-stage
 ENV NODE_ENV production
 ENV PORT 6700
 
-CMD ["npm", "restart"]
+CMD ["node", "index.js"]
