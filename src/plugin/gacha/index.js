@@ -1,11 +1,10 @@
-import _ from 'lodash';
 import random from './random';
 
-export default ctx => {
+export default async ctx => {
   const decks = global.config.bot.gacha;
   let stop = false;
 
-  for (let { file, regexp, freq } of decks) {
+  for (const { file, regexp, freq } of decks) {
     if ([file, regexp, freq].some(v => !(typeof v === 'string' && v.length))) continue;
 
     const regStyle = "(^" + regexp + "$)";

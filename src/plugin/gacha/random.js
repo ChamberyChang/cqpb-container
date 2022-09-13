@@ -6,8 +6,7 @@ import JSTAT from 'jstat';
 function getDecks(name) {
     const dataPath = Path.resolve(__dirname, `../../../data/decks/${name}.json`);
     try {
-        let data = Fse.readJsonSync(dataPath);
-        return data;
+        return Fse.readJsonSync(dataPath);
     } catch (error) {}
     return null;
 };
@@ -20,22 +19,22 @@ function arrayToString(text) {
     return null;
 };
 
-//权重伪随机生成器 （原作者：SayaSS 项目地址：https://github.com/SayaSS/CQ-gacha.git）
+// 权重伪随机生成器 （原作者：SayaSS 项目地址：https://github.com/SayaSS/CQ-gacha.git）
 function rolls(deckname, times) {
     const weight = getDecks(deckname).weight; // up角色/槽1/槽2/槽3/其他槽角色…（%）
-    const charaUp = getDecks(deckname).tierUp; //up角色，weight槽0
+    const charaUp = getDecks(deckname).tierUp; // up角色，weight槽0
     const chara9 = getDecks(deckname).tier9;
     const chara8 = getDecks(deckname).tier8;
     const chara7 = getDecks(deckname).tier7;
     const chara6 = getDecks(deckname).tier6;
     const chara5 = getDecks(deckname).tier5;
-    const chara4 = getDecks(deckname).tier4; //其他槽，没有的话4-9可以不用填
-    const chara3 = getDecks(deckname).tier3; //槽3
-    const chara2 = getDecks(deckname).tier2; //槽2
-    const chara1 = getDecks(deckname).tier1; //weight槽1
+    const chara4 = getDecks(deckname).tier4; // 其他槽，没有的话4-9可以不用填
+    const chara3 = getDecks(deckname).tier3; // 槽3
+    const chara2 = getDecks(deckname).tier2; // 槽2
+    const chara1 = getDecks(deckname).tier1; // weight槽1
 
-    let wtp = [];
-    let p = [];
+    const wtp = [];
+    const p = [];
 
     function sum(arr) {
         let s = 0;
@@ -46,20 +45,20 @@ function rolls(deckname, times) {
     }
 
     function choice(arr) {
-        return arr[Math.floor((Math.random() * arr.length))]
+        return arr[Math.floor((Math.random() * arr.length))];
     }
-    for (let i in weight) {
-        wtp.push(1. * weight[i] / sum(weight))
+    for (const i in weight) {
+        wtp.push(1. * weight[i] / sum(weight));
     }
-    for (let i in wtp) {
-        p.push(JSTAT.normal.sample(1. / wtp[i], 1. / wtp[i] / 3))
+    for (const i in wtp) {
+        p.push(JSTAT.normal.sample(1. / wtp[i], 1. / wtp[i] / 3));
     }
 
-    let result = [];
+    const result = [];
     for (let i = 0; i < times; i++) {
         let minp = 1.e9;
         let minj = -1;
-        for (let j in p) {
+        for (const j in p) {
             if (p[j] < minp) {
                 minp = p[j];
                 minj = parseInt(j);
@@ -86,7 +85,7 @@ function rolls(deckname, times) {
         } else if (minj === 9) {
             result.push(choice(chara9));
         }
-        for (let j in p) {
+        for (const j in p) {
             p[j] -= minp;
         }
         p[minj] = JSTAT.normal.sample(1. / wtp[minj], 1. / wtp[minj] / 3.);
